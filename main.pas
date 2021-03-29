@@ -876,6 +876,8 @@ procedure TForm1.DoCreateNew;
 begin
   maptexture.Clear;
   DoPrepareEditor;
+  needsupdate := True;
+  needbuffersupdate := True;
   SetFileName('');
 end;
 
