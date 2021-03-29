@@ -467,7 +467,7 @@ end;
 
 procedure TForm1.EditActionFloodFill(const X, Y: integer);
 var
-  rover: LongWord;
+  rover: integer;
 begin
   rover := maptexture.MapTiles[X, Y];
   if rover <> bktile then
