@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=F:\DelphiDoom_Release\ENDEDIT\garbage\EFFECTS.BIN
+RunParams=F:\DelphiDoom_Release\SPEEDHASTE\data\MAP00.DAT
 HostApplication=
 Launcher=
 UseLauncher=0

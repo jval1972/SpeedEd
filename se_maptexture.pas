@@ -41,6 +41,7 @@ const
 
 type
   maptexture_t = packed record
+    filler: LongWord;
     maptiles: packed array[0..SCREENSIZE - 1] of smallint;
     angles: packed array[0..SCREENSIZE - 1] of byte;
   end;
@@ -93,7 +94,7 @@ end;
 
 function TMapTexture.getidx(const x, y: integer): integer;
 begin
-  Result := y * SCREENSIZEX + x;
+  Result := y * SCREENSIZEX + (SCREENSIZEX - x - 1);
 end;
 
 procedure TMapTexture.SetMapTile(x, y: integer; const tile: integer);
@@ -197,8 +198,16 @@ var
       yb := (m mod 64) * 64;
       g := data.maptiles[m];
       ig := g * 64 * 64;
-      for ix := 0 to 4095 do
-        tile[ix] := grafs[ig + ix];
+      if (ig >= 0) and (ig < grafsize - 4095) then
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := grafs[ig + ix];
+      end
+      else
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := 0;
+      end;
 
       _rotate_tile(@tile, data.angles[m]);
 
@@ -258,7 +267,7 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to 4095 do
         begin
-          bb := bmbuffer4096[ix, iy];
+          bb := bmbuffer4096[iy, ix];
           c := RGB(pal[3 * bb + 2] * 4, pal[3 * bb + 1] * 4 + 2, pal[3 * bb] * 4 + 2);
           ln[ix] := c;
         end;

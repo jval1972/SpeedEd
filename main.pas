@@ -100,33 +100,15 @@ type
     ToolPanel: TPanel;
     BackgroundPalettePanel1: TPanel;
     BackgroundPalette1: TImage;
-    CursorBlinkTimer: TTimer;
     Panel5: TPanel;
-    ForegroundPalettePanel1: TPanel;
-    ForegroundPalette1: TImage;
-    Panel6: TPanel;
     FreeDrawSpeedButton: TSpeedButton;
     FloodFillSpeedButton: TSpeedButton;
     RectSpeedButton: TSpeedButton;
     FillRectSpeedButton: TSpeedButton;
     LineSpeedButton: TSpeedButton;
     EraseTextSpeedButton: TSpeedButton;
-    TextSpeedButton: TSpeedButton;
     EclipseSpeedButton: TSpeedButton;
     FilledEclipseSpeedButton: TSpeedButton;
-    SpecialCharactersPanel1: TPanel;
-    SpecialCharacters1: TImage;
-    Panel3: TPanel;
-    SpecialCharSpeedButton1: TSpeedButton;
-    TextColorChangeSpeedButton: TSpeedButton;
-    CharRect1SpeedButton: TSpeedButton;
-    CharRect2SpeedButton: TSpeedButton;
-    CharRect3SpeedButton: TSpeedButton;
-    CharRect4SpeedButton: TSpeedButton;
-    CharRect5SpeedButton: TSpeedButton;
-    SpecialCharSpeedButton2: TSpeedButton;
-    SpecialCharSelectSpeedButton1: TSpeedButton;
-    SpecialCharSelectSpeedButton2: TSpeedButton;
     PaintBoxPopupMenu1: TPopupMenu;
     Undo2: TMenuItem;
     Redo2: TMenuItem;
@@ -134,8 +116,6 @@ type
     Cut2: TMenuItem;
     Copy2: TMenuItem;
     Paste2: TMenuItem;
-    BlinkOnSpeedButton: TSpeedButton;
-    BlinkOffSpeedButton: TSpeedButton;
     Export1: TMenuItem;
     N6: TMenuItem;
     SavePictureDialog1: TSavePictureDialog;
@@ -171,8 +151,6 @@ type
     procedure GridButton1Click(Sender: TObject);
     procedure BackgroundPalette1MouseDown(Sender: TObject;
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure ForegroundPalette1MouseDown(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure FreeDrawSpeedButtonClick(Sender: TObject);
     procedure EraseTextSpeedButtonClick(Sender: TObject);
     procedure FloodFillSpeedButtonClick(Sender: TObject);
@@ -186,62 +164,38 @@ type
     procedure CharRectSpeedButtonClick(Sender: TObject);
     procedure BlinkOnSpeedButtonClick(Sender: TObject);
     procedure BlinkOffSpeedButtonClick(Sender: TObject);
-    procedure CursorBlinkTimerTimer(Sender: TObject);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure EclipseSpeedButtonClick(Sender: TObject);
     procedure FilledEclipseSpeedButtonClick(Sender: TObject);
-    procedure SpecialCharSelectSpeedButton1MouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure SpecialCharSelectSpeedButton1MouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure SpecialCharSelectSpeedButton1MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure SpecialCharSelectSpeedButton2MouseDown(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-    procedure SpecialCharSelectSpeedButton2MouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure SpecialCharSelectSpeedButton2MouseUp(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Cut1Click(Sender: TObject);
     procedure PaintBoxPopupMenu1Popup(Sender: TObject);
     procedure Export1Click(Sender: TObject);
-    procedure Onlinedocumentation1Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
     drawbuffer: TBitmap;
     changed: boolean;
     needsupdate: boolean;
+    needbuffersupdate: boolean;
     undoManager: TUndoRedoManager;
     filemenuhistory: TFileMenuHistory;
     ffilename: string;
-    escreen, backscreen: TMapTexture;
+    maptexture, backscreen: TMapTexture;
     zoom: integer;
     flastzoomwheel: int64;
-    blink: boolean;
     lmousedown: boolean;
     lmouserecalcdown: boolean;
     lmousetraceposition: boolean;
     lmouseclearonmove: boolean;
     lmousedownx, lmousedowny: integer;
     lmousemovex, lmousemovey: integer;
-    lcursorx, lcursory: integer;
-    lcursortic: LongWord;
-    bkcolor, fgcolor: LongWord;
-    bkpalbitmap, fgpalbitmap: TBitmap;
-    specialcharbitmap: TBitmap;
-    specialchar1: Char;
-    specialchar2: Char;
-    specialcharLastClick: TPoint;
+    bktile: LongWord;
+    bkpalbitmap: TBitmap;
     closing: boolean;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
     procedure InvalidatePaintBox;
     procedure DrawGrid;
-    procedure DrawCursor;
     function ZoomValueX(const X: Integer): Integer;
     function ZoomValueY(const Y: Integer): Integer;
     procedure LLeftMousePaintAt(const X, Y: integer);
@@ -262,26 +216,15 @@ type
     procedure SetFileName(const fname: string);
     procedure HandlePaletteImage(const X, Y: integer; const Palette1: TImage;
       const palbitmap: TBitmap; const tx: string; var cc: LongWord);
-    procedure HandleCharactersImage(const X, Y: integer; const Characters1: TImage;
-      const SpecialCharSpeedButton: TSpeedButton; const charbitmap: TBitmap;
-      const makebk: boolean; var ch: Char);
-    function lcursordown: boolean;
-    procedure EditActionFreeDrawBackground(const X, Y: integer);
-    procedure EditActionEraseText(const X, Y: integer);
+    procedure EditActionFreeDraw(const X, Y: integer);
+    procedure EditActionErase(const X, Y: integer);
     procedure EditActionFloodFill(const X, Y: integer);
     procedure EditActionRect(const X, Y: integer);
     procedure EditActionFillRect(const X, Y: integer);
     procedure EditActionLine(const X, Y: integer);
-    procedure EditActionText(const X, Y: integer);
     procedure midpointellipse(const X, Y: integer; const filled: boolean);
     procedure EditActionEclipse(const X, Y: integer);
     procedure EditActionFillEclipse(const X, Y: integer);
-    procedure EditActionSpecialCharacter1(const X, Y: integer);
-    procedure EditActionSpecialCharacter2(const X, Y: integer);
-    procedure EditActionTextColorChange(const X, Y: integer);
-    procedure EditActionCharRectChange(const X, Y: integer;
-      const atopleft, atopright, abottomleft, abottomright, ahorz, avert: integer);
-    procedure EditActionBlink(const X, Y: integer; const ablink: Boolean);
     procedure DoExportImage(const imgfname: string);
   public
     { Public declarations }
@@ -319,10 +262,6 @@ begin
   lmousemovex := 0;
   lmousemovey := 0;
 
-  lcursorx := 0;
-  lcursory := 0;
-  lcursortic := 0;
-
   buffer := TBitmap.Create;
   buffer.Width := SCREENSIZEX * TILESIZE;
   buffer.Height := SCREENSIZEY * TILESIZE;
@@ -340,10 +279,8 @@ begin
 
   flastzoomwheel := GetTickCount;
 
-  escreen := TMapTexture.Create;
+  maptexture := TMapTexture.Create;
   backscreen := TMapTexture.Create;
-
-  blink := False;
 
   undoManager := TUndoRedoManager.Create;
   undoManager.OnLoadFromStream := DoLoadUndo;
@@ -382,16 +319,7 @@ begin
 
   bkpalbitmap := TBitmap.Create;
   bkpalbitmap.Assign(BackgroundPalette1.Picture.Bitmap);
-  HandlePaletteImage(BackgroundPalette1.Width - 1, BackgroundPalette1.Height - 1, BackgroundPalette1, bkpalbitmap, 'BK', bkcolor);
-
-  fgpalbitmap := TBitmap.Create;
-  fgpalbitmap.Assign(ForegroundPalette1.Picture.Bitmap);
-  HandlePaletteImage(ForegroundPalette1.Width - 1, ForegroundPalette1.Height - 1, ForegroundPalette1, fgpalbitmap, 'FG', fgcolor);
-
-  specialcharbitmap := TBitmap.Create;
-  specialcharbitmap.Assign(SpecialCharacters1.Picture.Bitmap);
-  HandleCharactersImage(1, 1, SpecialCharacters1, SpecialCharSpeedButton1, specialcharbitmap, True, specialchar1);
-  HandleCharactersImage(1, 1, SpecialCharacters1, SpecialCharSpeedButton2, specialcharbitmap, False, specialchar2);
+  HandlePaletteImage(BackgroundPalette1.Width - 1, BackgroundPalette1.Height - 1, BackgroundPalette1, bkpalbitmap, 'BK', bktile);
 
   doCreate := True;
   if ParamCount > 0 then
@@ -401,6 +329,7 @@ begin
   if docreate then
   begin
     needsupdate := True;
+    needbuffersupdate := True;
     DoCreateNew;
   end;
 
@@ -441,10 +370,8 @@ begin
   drawbuffer.Free;
 
   bkpalbitmap.Free;
-  fgpalbitmap.Free;
-  specialcharbitmap.Free;
 
-  escreen.Free;
+  maptexture.Free;
   backscreen.Free;
 end;
 
@@ -513,18 +440,12 @@ begin
   CreateDrawBuffer;
   PaintBox1.Width := drawbuffer.Width;
   PaintBox1.Height := drawbuffer.Height;
-  if TextSpeedButton.Down then
-    PaintBox1.Cursor := crIBeam
-  else
-    PaintBox1.Cursor := crCross;
   PaintBox1.Invalidate;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-  blink := not blink;
   UpdateEnable;
-  InvalidatePaintBox;
 end;
 
 procedure TForm1.Edit1Click(Sender: TObject);
@@ -534,40 +455,35 @@ begin
   Redo1.Enabled := undoManager.CanRedo;
 end;
 
-function TForm1.lcursordown: boolean;
+procedure TForm1.EditActionFreeDraw(const X, Y: integer);
 begin
-  Result := TextSpeedButton.Down;
+  maptexture.MapTiles[X, Y] := bktile;
 end;
 
-procedure TForm1.EditActionFreeDrawBackground(const X, Y: integer);
+procedure TForm1.EditActionErase(const X, Y: integer);
 begin
-  escreen.BackgroundColor[X, Y] := bkcolor;
-end;
-
-procedure TForm1.EditActionEraseText(const X, Y: integer);
-begin
-  escreen.Character[X, Y] := #0;
+  maptexture.MapTiles[X, Y] := 0;
 end;
 
 procedure TForm1.EditActionFloodFill(const X, Y: integer);
 var
   rover: LongWord;
 begin
-  rover := escreen.BackgroundColor[X, Y];
-  if rover <> bkcolor then
+  rover := maptexture.MapTiles[X, Y];
+  if rover <> bktile then
   begin
-    escreen.BackgroundColor[X, Y] := bkcolor;
+    maptexture.MapTiles[X, Y] := bktile;
     if X > 0 then
-      if escreen.BackgroundColor[X - 1, Y] = rover then
+      if maptexture.MapTiles[X - 1, Y] = rover then
         EditActionFloodFill(X - 1, Y);
     if X < SCREENSIZEX - 1 then
-      if escreen.BackgroundColor[X + 1, Y] = rover then
+      if maptexture.MapTiles[X + 1, Y] = rover then
         EditActionFloodFill(X + 1, Y);
     if Y > 0 then
-      if escreen.BackgroundColor[X, Y - 1] = rover then
+      if maptexture.MapTiles[X, Y - 1] = rover then
         EditActionFloodFill(X, Y - 1);
     if Y < SCREENSIZEY - 1 then
-      if escreen.BackgroundColor[X, Y + 1] = rover then
+      if maptexture.MapTiles[X, Y + 1] = rover then
         EditActionFloodFill(X, Y + 1);
   end;
 end;
@@ -583,13 +499,13 @@ begin
   abottom := MaxI(lmousedowny, Y);
   for i := aleft to aright do
   begin
-    escreen.BackgroundColor[i, atop] := bkcolor;
-    escreen.BackgroundColor[i, abottom] := bkcolor;
+    maptexture.MapTiles[i, atop] := bktile;
+    maptexture.MapTiles[i, abottom] := bktile;
   end;
   for i := atop + 1 to abottom - 1 do
   begin
-    escreen.BackgroundColor[aleft, i] := bkcolor;
-    escreen.BackgroundColor[aright, i] := bkcolor;
+    maptexture.MapTiles[aleft, i] := bktile;
+    maptexture.MapTiles[aright, i] := bktile;
   end;
 end;
 
@@ -604,18 +520,12 @@ begin
   abottom := MaxI(lmousedowny, Y);
   for i := aleft to aright do
     for j := atop to abottom do
-      escreen.BackgroundColor[i, j] := bkcolor;
+      maptexture.MapTiles[i, j] := bktile;
 end;
 
 procedure TForm1.EditActionLine(const X, Y: integer);
 begin
-  escreen.BackgroundColor[X, Y] := bkcolor;
-end;
-
-procedure TForm1.EditActionText(const X, Y: integer);
-begin
-  lcursorx := X;
-  lcursory := Y;
+  maptexture.MapTiles[X, Y] := bktile;
 end;
 
 procedure TForm1.midpointellipse(const X, Y: integer; const filled: boolean);
@@ -630,7 +540,7 @@ var
   begin
     if IsIntInRange(ax, 0, SCREENSIZEX - 1) then
       if IsIntInRange(ay, 0, SCREENSIZEY - 1) then
-        escreen.BackgroundColor[ax, ay] := bkcolor;
+        maptexture.MapTiles[ax, ay] := bktile;
   end;
 
 begin
@@ -732,105 +642,26 @@ begin
   midpointellipse(X, Y, True);
 end;
 
-procedure TForm1.EditActionSpecialCharacter1(const X, Y: integer);
-begin
-  escreen.BackgroundColor[X, Y] := bkcolor;
-  escreen.ForegroundColor[X, Y] := fgcolor;
-  escreen.Character[X, Y] := specialchar1;
-end;
-
-procedure TForm1.EditActionSpecialCharacter2(const X, Y: integer);
-begin
-  escreen.ForegroundColor[X, Y] := fgcolor;
-  escreen.Character[X, Y] := specialchar2;
-end;
-
-procedure TForm1.EditActionTextColorChange(const X, Y: integer);
-begin
-  escreen.ForegroundColor[X, Y] := fgcolor;
-end;
-
-procedure TForm1.EditActionCharRectChange(const X, Y: integer;
-  const atopleft, atopright, abottomleft, abottomright, ahorz, avert: integer);
-var
-  atop, abottom, aleft, aright: integer;
-  i: integer;
-begin
-  aleft := MinI(lmousedownx, X);
-  aright := MaxI(lmousedownx, X);
-  atop := MinI(lmousedowny, Y);
-  abottom := MaxI(lmousedowny, Y);
-  for i := aleft + 1 to aright - 1 do
-  begin
-    escreen.ForegroundColor[i, atop] := fgcolor;
-    escreen.Character[i, atop] := Chr(ahorz);
-    escreen.ForegroundColor[i, abottom] := fgcolor;
-    escreen.Character[i, abottom] := Chr(ahorz);
-  end;
-  for i := atop + 1 to abottom - 1 do
-  begin
-    escreen.ForegroundColor[aleft, i] := fgcolor;
-    escreen.Character[aleft, i] := Chr(avert);
-    escreen.ForegroundColor[aright, i] := fgcolor;
-    escreen.Character[aright, i] := Chr(avert);
-  end;
-  escreen.ForegroundColor[aleft, atop] := fgcolor;
-  escreen.Character[aleft, atop] := Chr(atopleft);
-  escreen.ForegroundColor[aright, atop] := fgcolor;
-  escreen.Character[aright, atop] := Chr(atopright);
-  escreen.ForegroundColor[aleft, abottom] := fgcolor;
-  escreen.Character[aleft, abottom] := Chr(abottomleft);
-  escreen.ForegroundColor[aright, abottom] := fgcolor;
-  escreen.Character[aright, abottom] := Chr(abottomright);
-end;
-
-procedure TForm1.EditActionBlink(const X, Y: integer; const ablink: Boolean);
-begin
-  escreen.Blink[X, Y] := ablink;
-end;
-
 procedure TForm1.LLeftMousePaintAt(const X, Y: integer);
 begin
   if not lmousedown then
     Exit;
   if FreeDrawSpeedButton.Down then
-    EditActionFreeDrawBackground(X, Y)
+    EditActionFreeDraw(X, Y)
   else if FloodFillSpeedButton.Down then
     EditActionFloodFill(X, Y)
   else if EraseTextSpeedButton.Down then
-    EditActionEraseText(X, Y)
+    EditActionErase(X, Y)
   else if RectSpeedButton.Down then
     EditActionRect(X, Y)
   else if FillRectSpeedButton.Down then
     EditActionFillRect(X, Y)
   else if LineSpeedButton.Down then
     EditActionLine(X, Y)
-  else if lcursordown then
-    EditActionText(X, Y)
   else if EclipseSpeedButton.Down then
     EditActionEclipse(X, Y)
   else if FilledEclipseSpeedButton.Down then
-    EditActionFillEclipse(X, Y)
-  else if SpecialCharSpeedButton1.Down then
-    EditActionSpecialCharacter1(X, Y)
-  else if SpecialCharSpeedButton2.Down then
-    EditActionSpecialCharacter2(X, Y)
-  else if TextColorChangeSpeedButton.Down then
-    EditActionTextColorChange(X, Y)
-  else if CharRect1SpeedButton.Down then
-    EditActionCharRectChange(X, Y, $DA, $BF, $C0, $D9, $C4, $B3)
-  else if CharRect2SpeedButton.Down then
-    EditActionCharRectChange(X, Y, $D5, $B8, $D4, $BE, $CD, $B3)
-  else if CharRect3SpeedButton.Down then
-    EditActionCharRectChange(X, Y, $D6, $B7, $D3, $BD, $C4, $BA)
-  else if CharRect4SpeedButton.Down then
-    EditActionCharRectChange(X, Y, $C9, $BB, $C8, $BC, $CD, $BA)
-  else if CharRect5SpeedButton.Down then
-    EditActionCharRectChange(X, Y, $DB, $DB, $DB, $DB, $DB, $DB)
-  else if BlinkOnSpeedButton.Down then
-    EditActionBlink(X, Y, True)
-  else if BlinkOffSpeedButton.Down then
-    EditActionBlink(X, Y, False);
+    EditActionFillEclipse(X, Y);
 end;
 
 procedure TForm1.LLeftMousePaintTo(const X, Y: integer);
@@ -845,7 +676,7 @@ begin
     Exit;
 
   if lmouseclearonmove then
-    escreen.AssignTo(backscreen);
+    maptexture.AssignTo(backscreen);
 
   if lmousetraceposition then
   begin
@@ -902,8 +733,9 @@ begin
   begin
     LLeftMousePaintAt(X, Y);
   end;
-  if not lcursordown then
-    Changed := True;
+
+  Changed := True;
+  needbuffersupdate := True;
   InvalidatePaintBox;
 end;
 
@@ -912,10 +744,9 @@ procedure TForm1.PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if button = mbLeft then
   begin
-    if not lcursordown then
-      undoManager.SaveUndo;
+    undoManager.SaveUndo;
 
-    backscreen.AssignTo(escreen);
+    backscreen.AssignTo(maptexture);
 
     lmousedown := True;
     lmousedownx := ZoomValueX(X);
@@ -945,11 +776,10 @@ begin
   lmousemovex := ZoomValueX(X);
   lmousemovey := ZoomValueY(Y);
   StatusBar1.SimpleText := Format(
-    'Position: (%d, %d), Background: (#%s), Foreground: (#%s), Text: (#%s)',
+    'Position: (%d, %d), Tile Id: (#%d), Angle: (#%d)',
       [lmousemovex, lmousemovey,
-       IntToHex(escreen.BackgroundColor[lmousemovex, lmousemovey], 6),
-       IntToHex(escreen.ForegroundColor[lmousemovex, lmousemovey], 6),
-       IntToHex(Ord(escreen.Character[lmousemovex, lmousemovey]), 2)]);
+       maptexture.MapTiles[lmousemovex, lmousemovey],
+       maptexture.Angles[lmousemovex, lmousemovey] * 90]);
   if lmousedown then
   begin
     LLeftMousePaintTo(lmousemovex, lmousemovey);
@@ -988,29 +818,6 @@ begin
 
 end;
 
-procedure TForm1.DrawCursor;
-var
-  stepw, steph: integer;
-begin
-  if lcursordown then
-  begin
-    drawbuffer.Canvas.Pen.Style := psSolid;
-    if Odd(lcursortic) then
-      drawbuffer.Canvas.Pen.Color := RGB(255, 255, 255)
-    else
-      drawbuffer.Canvas.Pen.Color := RGB(0, 0, 0);
-
-    stepw := drawbuffer.Width div SCREENSIZEX;
-    steph := drawbuffer.Height div SCREENSIZEY;
-
-    drawbuffer.Canvas.MoveTo(lcursorx * stepw, lcursory * steph);
-    drawbuffer.Canvas.LineTo(lcursorx * stepw, (lcursory + 1) * steph - 2);
-    drawbuffer.Canvas.LineTo((lcursorx + 1) * stepw - 2, (lcursory + 1) * steph - 2);
-    drawbuffer.Canvas.LineTo((lcursorx + 1) * stepw - 2, lcursory * steph);
-    drawbuffer.Canvas.LineTo(lcursorx * stepw, lcursory * steph);
-  end;
-end;
-
 function TForm1.ZoomValueX(const X: Integer): Integer;
 begin
   Result := GetIntInRange(X div (drawbuffer.Width div SCREENSIZEX), 0, SCREENSIZEX - 1);
@@ -1023,18 +830,22 @@ end;
 
 procedure TForm1.CreateDrawBuffer;
 begin
-  escreen.GetBitmap(buffer, blink);
+  if needbuffersupdate then
+  begin
+    maptexture.GetBitmap(buffer, False);
+    needbuffersupdate := False;
+  end;
+
   drawbuffer.Width := SCREENSIZEX * ((TILESIZE div MAXZOOM) * zoom);
   drawbuffer.Height := SCREENSIZEY * ((TILESIZE div MAXZOOM) * zoom);
 
   drawbuffer.Canvas.StretchDraw(Rect(0, 0, drawbuffer.Width, drawbuffer.Height), buffer);
   DrawGrid;
-  DrawCursor;
 end;
 
 procedure TForm1.CreateExportBuffer;
 begin
-  escreen.GetBitmap(buffer, blink);
+  maptexture.GetBitmap(buffer, False);
   exportbuffer.Canvas.StretchDraw(Rect(0, 0, exportbuffer.Width, exportbuffer.Height), buffer);
 end;
 
@@ -1057,17 +868,13 @@ end;
 
 procedure TForm1.DoPrepareEditor;
 begin
-  lcursorx := 0;
-  lcursory := 0;
-  lcursortic := 0;
   undoManager.Clear;
-  blink := False;
   changed := False;
 end;
 
 procedure TForm1.DoCreateNew;
 begin
-  escreen.Clear;
+  maptexture.Clear;
   DoPrepareEditor;
   SetFileName('');
 end;
@@ -1075,12 +882,13 @@ end;
 procedure TForm1.DoLoadFromStream(const s: TStream);
 begin
   needsupdate := True;
-  escreen.LoadFromStream(s);
+  needbuffersupdate := True;
+  maptexture.LoadFromStream(s);
 end;
 
 procedure TForm1.DoSaveToStream(const s: TStream);
 begin
-  escreen.SaveToStream(s);
+  maptexture.SaveToStream(s);
 end;
 
 procedure TForm1.DoLoadUndo(const s: TStream);
@@ -1222,10 +1030,10 @@ begin
   flastzoomwheel := tick;
   pt := PaintBox1.Parent.ScreenToClient(MousePos);
   r := PaintBox1.ClientRect;
-  if r.Right > ScrollBox1.Width then
+{  if r.Right > ScrollBox1.Width then
     r.Right := ScrollBox1.Width;
   if r.Bottom > ScrollBox1.Height then
-    r.Bottom := ScrollBox1.Height;
+    r.Bottom := ScrollBox1.Height;}
   if PtInRect(r, pt) then
     ZoomOut1Click(Sender);
 end;
@@ -1243,10 +1051,10 @@ begin
   flastzoomwheel := tick;
   pt := PaintBox1.Parent.ScreenToClient(MousePos);
   r := PaintBox1.ClientRect;
-  if r.Right > ScrollBox1.Width then
+{  if r.Right > ScrollBox1.Width then
     r.Right := ScrollBox1.Width;
   if r.Bottom > ScrollBox1.Height then
-    r.Bottom := ScrollBox1.Height;
+    r.Bottom := ScrollBox1.Height;}
   if PtInRect(r, pt) then
     ZoomIn1Click(Sender);
 end;
@@ -1301,7 +1109,7 @@ begin
   if not IsIntInRange(Y, 0, Palette1.Height - 1) then
     Exit;
 
-  cc := palbitmap.Canvas.Pixels[X, Y];
+  cc := (X div 16) + (Y div 16) * 4;
 
   C := Palette1.Picture.Bitmap.Canvas;
   C.Draw(0, 0, palbitmap);
@@ -1326,78 +1134,10 @@ begin
   Palette1.Invalidate;
 end;
 
-procedure TForm1.HandleCharactersImage(const X, Y: integer; const Characters1: TImage;
-  const SpecialCharSpeedButton: TSpeedButton; const charbitmap: TBitmap;
-  const makebk: boolean; var ch: Char);
-var
-  px, py: integer;
-  C, C2: TCanvas;
-  ix, iy, dx, dy: integer;
-begin
-  if closing then
-    Exit;
-
-  if not IsIntInRange(X, 0, Characters1.Width - 1) then
-    Exit;
-
-  if not IsIntInRange(Y, 0, Characters1.Height - 1) then
-    Exit;
-
-  specialcharLastClick.X := X;
-  specialcharLastClick.Y := Y;
-
-  C := Characters1.Picture.Bitmap.Canvas;
-  C2 := SpecialCharSpeedButton.Glyph.Canvas;
-  C.Draw(0, 0, charbitmap);
-  px := X div CHARACTERPICKPALETTESIZE;
-  py := Y div CHARACTERPICKPALETTESIZE;
-  ch := Chr(py * (Characters1.Width div CHARACTERPICKPALETTESIZE) + px + 176);
-
-  dx := px * CHARACTERPICKPALETTESIZE;
-  dy := py * CHARACTERPICKPALETTESIZE;
-  for ix := dx to (1 + px) * CHARACTERPICKPALETTESIZE - 1 do
-    for iy := dy to (1 + py) * CHARACTERPICKPALETTESIZE - 1 do
-      if C.Pixels[ix, iy] = RGB(0, 0, 0) then
-      begin
-        C.Pixels[ix, iy] := fgcolor;
-        if makebk then
-          C2.Pixels[ix - dx + 2, iy - dy + 2] := fgcolor
-        else
-          C2.Pixels[ix - dx + 2, iy - dy + 2] := RGB(0, 0, 0);
-      end
-      else
-      begin
-        C.Pixels[ix, iy] := bkcolor;
-        if makebk then
-          C2.Pixels[ix - dx + 2, iy - dy + 2] := bkcolor
-        else
-          C2.Pixels[ix - dx + 2, iy - dy + 2] := RGB(240, 240, 240);
-      end;
-
-  C.Pen.Style := psSolid;
-  C.Pen.Color := RGB(255, 0, 0);
-  C.MoveTo(px * CHARACTERPICKPALETTESIZE, py * CHARACTERPICKPALETTESIZE);
-  C.LineTo((1 + px) * CHARACTERPICKPALETTESIZE - 1, py * CHARACTERPICKPALETTESIZE);
-  C.LineTo((1 + px) * CHARACTERPICKPALETTESIZE - 1, (1 + py) * CHARACTERPICKPALETTESIZE - 1);
-  C.LineTo(px * CHARACTERPICKPALETTESIZE, (1 + py) * CHARACTERPICKPALETTESIZE - 1);
-  C.LineTo(px * CHARACTERPICKPALETTESIZE, py * CHARACTERPICKPALETTESIZE);
-  Characters1.Invalidate;
-end;
-
 procedure TForm1.BackgroundPalette1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap, 'BK', bkcolor);
-  HandleCharactersImage(specialcharLastClick.X, specialcharLastClick.Y, SpecialCharacters1, SpecialCharSpeedButton1, specialcharbitmap, True, specialchar1);
-  HandleCharactersImage(specialcharLastClick.X, specialcharLastClick.Y, SpecialCharacters1, SpecialCharSpeedButton2, specialcharbitmap, False, specialchar2);
-end;
-
-procedure TForm1.ForegroundPalette1MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  HandlePaletteImage(X, Y, ForegroundPalette1, fgpalbitmap, 'FG', fgcolor);
-  HandleCharactersImage(specialcharLastClick.X, specialcharLastClick.Y, SpecialCharacters1, SpecialCharSpeedButton1, specialcharbitmap, True, specialchar1);
-  HandleCharactersImage(specialcharLastClick.X, specialcharLastClick.Y, SpecialCharacters1, SpecialCharSpeedButton2, specialcharbitmap, False, specialchar2);
+  HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap, 'BK', bktile);
 end;
 
 procedure TForm1.FreeDrawSpeedButtonClick(Sender: TObject);
@@ -1506,217 +1246,6 @@ begin
   lmouseclearonmove := False;
 end;
 
-procedure TForm1.CursorBlinkTimerTimer(Sender: TObject);
-begin
-  if lcursordown then
-  begin
-    inc(lcursortic);
-    needsupdate := True;
-  end;
-end;
-
-procedure TForm1.FormKeyPress(Sender: TObject; var Key: Char);
-begin
-  if not lcursordown then
-    Exit;
-
-  if key in [#32..#128] then
-  begin
-    escreen.ForegroundColor[lcursorx, lcursory] := fgcolor;
-    if escreen.Character[lcursorx, lcursory] <> key then
-    begin
-      undoManager.SaveUndo;
-      changed := True;
-      escreen.Character[lcursorx, lcursory] := key;
-      needsupdate := True;
-    end;
-    if lcursorx < SCREENSIZEX - 1 then
-      inc(lcursorx)
-    else if lcursory < SCREENSIZEY - 1 then
-    begin
-      lcursorx := 0;
-      inc(lcursory);
-    end;
-  end
-  else if key = #8 then
-  begin
-    if lcursorx > 0 then
-      dec(lcursorx)
-    else if lcursory > 0 then
-    begin
-      lcursorx := SCREENSIZEX - 1;
-      dec(lcursory);
-    end;
-    if escreen.Character[lcursorx, lcursory] <> ' ' then
-    begin
-      undoManager.SaveUndo;
-      changed := True;
-      escreen.Character[lcursorx, lcursory] := ' ';
-      needsupdate := True;
-    end;
-  end
-  else if key = #13 then
-  begin
-    if lcursory < SCREENSIZEY - 1 then
-    begin
-      lcursorx := 0;
-      inc(lcursory);
-      needsupdate := True;
-    end;
-  end;
-end;
-
-procedure TForm1.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-begin
-  if not lcursordown then
-    Exit;
-
-  if not (Shift = []) then
-    Exit;
-
-  case key of
-    VK_DELETE:
-      if escreen.Character[lcursorx, lcursory] <> ' ' then
-      begin
-        undoManager.SaveUndo;
-        changed := True;
-        escreen.Character[lcursorx, lcursory] := ' ';
-        needsupdate := True;
-      end;
-    VK_END:
-      begin
-        lcursorx := SCREENSIZEX - 1;
-        needsupdate := True;
-      end;
-    VK_HOME:
-      begin
-        lcursorx := 0;
-        needsupdate := True;
-      end;
-    VK_LEFT:
-      begin
-        if lcursorx > 0 then
-        begin
-          dec(lcursorx);
-          needsupdate := True;
-        end;
-      end;
-    VK_RIGHT:
-      begin
-        if lcursorx < SCREENSIZEX - 1 then
-        begin
-          inc(lcursorx);
-          needsupdate := True;
-        end;
-      end;
-    VK_DOWN:
-      begin
-        if lcursory < SCREENSIZEY - 1 then
-        begin
-          inc(lcursory);
-          needsupdate := True;
-        end;
-      end;
-    VK_UP:
-      begin
-        if lcursory > 0 then
-        begin
-          dec(lcursory);
-          needsupdate := True;
-        end;
-      end;
-    33: // Page Up
-      begin
-        if lcursory > 4 then
-          dec(lcursory, 5)
-        else
-          lcursory := 0;
-        needsupdate := True;
-      end;
-    34: // Page Down
-      begin
-        if lcursory < SCREENSIZEY - 5 then
-          inc(lcursory, 5)
-        else
-          lcursory := SCREENSIZEY - 1;
-        needsupdate := True;
-      end;
-  end;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton1MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  SpecialCharSpeedButton1.Down := True;
-  SpecialCharSpeedButton1.OnClick(Sender);
-  SpecialCharSelectSpeedButton1.Down := True;
-  SpecialCharactersPanel1.Left := SpecialCharSpeedButton1.Left;
-  SpecialCharactersPanel1.Top := SpecialCharSpeedButton1.Top + SpecialCharSpeedButton1.Height;
-  SpecialCharactersPanel1.BringToFront;
-  SpecialCharactersPanel1.Visible := True;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton1MouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  SpecialCharactersPanel1.Visible := False;
-  SpecialCharSelectSpeedButton1.Down := False;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton1MouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-var
-  p: TPoint;
-begin
-  if SpecialCharactersPanel1.Visible then
-  begin
-    p.X := X;
-    p.Y := Y;
-    p := SpecialCharSelectSpeedButton1.ClientToScreen(p);
-    p := SpecialCharacters1.ScreenToClient(p);
-    HandleCharactersImage(p.X, p.Y, SpecialCharacters1, SpecialCharSpeedButton1, specialcharbitmap, True, specialchar1);
-  end
-  else
-    SpecialCharSelectSpeedButton1.Down := False;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton2MouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  SpecialCharSpeedButton2.Down := True;
-  SpecialCharSpeedButton2.OnClick(Sender);
-  SpecialCharSelectSpeedButton2.Down := True;
-  SpecialCharactersPanel1.Left := SpecialCharSpeedButton2.Left;
-  SpecialCharactersPanel1.Top := SpecialCharSpeedButton2.Top + SpecialCharSpeedButton2.Height;
-  SpecialCharactersPanel1.BringToFront;
-  SpecialCharactersPanel1.Visible := True;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton2MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-var
-  p: TPoint;
-begin
-  if SpecialCharactersPanel1.Visible then
-  begin
-    p.X := X;
-    p.Y := Y;
-    p := SpecialCharSelectSpeedButton2.ClientToScreen(p);
-    p := SpecialCharacters1.ScreenToClient(p);
-    HandleCharactersImage(p.X, p.Y, SpecialCharacters1, SpecialCharSpeedButton2, specialcharbitmap, False, specialchar2);
-  end
-  else
-    SpecialCharSelectSpeedButton2.Down := False;
-end;
-
-procedure TForm1.SpecialCharSelectSpeedButton2MouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  SpecialCharactersPanel1.Visible := False;
-  SpecialCharSelectSpeedButton2.Down := False;
-end;
-
 procedure TForm1.Cut1Click(Sender: TObject);
 var
   x, y: integer;
@@ -1726,7 +1255,7 @@ begin
   Changed := True;
   for x := 0 to SCREENSIZEX - 1 do
     for y := 0 to SCREENSIZEY - 1 do
-      escreen.BackgroundColor[x, y] := 0;
+      maptexture.MapTiles[x, y] := 0;
 end;
 
 procedure TForm1.PaintBoxPopupMenu1Popup(Sender: TObject);
@@ -1777,11 +1306,6 @@ begin
   end
   else
     exportbuffer.SaveToFile(imgfname);
-end;
-
-procedure TForm1.Onlinedocumentation1Click(Sender: TObject);
-begin
-  I_GoToWebPage('https://endedit.sourceforge.io');
 end;
 
 end.
