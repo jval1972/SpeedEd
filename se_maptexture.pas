@@ -141,7 +141,6 @@ end;
 
 procedure TMapTexture.GetBitmap(const b: TBitmap; const doublesize: boolean);
 var
-  position: integer;
   grafs: PByteArray;
   grafsize: integer;
   pal: PByteArray;
@@ -186,7 +185,6 @@ var
     it: integer;
     bmbuffer4096: bmbuffer4096_p;
     bmbuffer8192: bmbuffer8192_p;
-    ll: integer;
     bb: byte;
     c: LongWord;
     ln: PLongWordArray;
