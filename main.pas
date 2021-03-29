@@ -115,7 +115,6 @@ type
     Export1: TMenuItem;
     N6: TMenuItem;
     SavePictureDialog1: TSavePictureDialog;
-    Onlinedocumentation1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
