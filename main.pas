@@ -515,6 +515,7 @@ uses
 
 resourcestring
   rsTitle = 'WAD Painter';
+  rsTitle = 'GLSpeed Editor Utilities';
 
 // Helper function
 procedure ClearList(const lst: TStringList);
