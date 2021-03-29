@@ -497,7 +497,6 @@ implementation
 uses
   se_defs,
   se_utils,
-  frm_newterrain,
   se_wadreader,
   se_palettes,
   frm_loadimagehelper,
@@ -514,7 +513,6 @@ uses
 {$R *.dfm}
 
 resourcestring
-  rsTitle = 'WAD Painter';
   rsTitle = 'GLSpeed Editor Utilities';
 
 // Helper function
@@ -734,16 +732,11 @@ begin
 end;
 
 procedure TForm1.NewButton1Click(Sender: TObject);
-var
-  twidth, theight: integer;
 begin
   if not CheckCanClose then
     Exit;
 
-  twidth := tex.texturewidth;
-  theight := tex.textureheight;
-  if GetNewTextureSize(twidth, theight) then
-    DoNewTexture(twidth, theight);
+  DoNewTexture(4096, 4096);
 end;
 
 procedure TForm1.DoNewTexture(const twidth, theight: integer);

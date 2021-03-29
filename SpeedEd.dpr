@@ -43,7 +43,6 @@ uses
   zBitmap in 'zBitmap.pas',
   zlibpas in 'zlibpas.pas',
   se_slider in 'se_slider.pas',
-  frm_newterrain in 'frm_newterrain.pas' {NewForm},
   se_class in 'se_class.pas',
   se_wadreader in 'se_wadreader.pas',
   pngimage1 in 'pngimage1.pas',

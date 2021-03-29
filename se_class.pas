@@ -74,8 +74,8 @@ const
   TEXTURE_MAGIC: integer = $50444157; // WADP
 
 const
-  DEF_TEXTURE_WIDTH = 256;
-  DEF_TEXTURE_HEIGHT = 256;
+  DEF_TEXTURE_WIDTH = 4096;
+  DEF_TEXTURE_HEIGHT = 4096;
 
 implementation
 
