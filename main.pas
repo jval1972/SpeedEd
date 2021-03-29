@@ -52,7 +52,6 @@ type
     StatusBar1: TStatusBar;
     LeftPanel: TPanel;
     OpenSpeedButton1: TSpeedButton;
-    PasteSpeedButton1: TSpeedButton;
     SaveSpeedButton1: TSpeedButton;
     CopySpeedButton1: TSpeedButton;
     GridButton1: TSpeedButton;
@@ -64,8 +63,6 @@ type
     Exit1: TMenuItem;
     Edit1: TMenuItem;
     Copy1: TMenuItem;
-    N2: TMenuItem;
-    Paste1: TMenuItem;
     Help1: TMenuItem;
     About1: TMenuItem;
     Timer1: TTimer;
@@ -115,7 +112,6 @@ type
     N5: TMenuItem;
     Cut2: TMenuItem;
     Copy2: TMenuItem;
-    Paste2: TMenuItem;
     Export1: TMenuItem;
     N6: TMenuItem;
     SavePictureDialog1: TSavePictureDialog;
@@ -386,8 +382,6 @@ begin
   Redo1.Enabled := undoManager.CanRedo;
   UndoSpeedButton1.Enabled := undoManager.CanUndo;
   RedoSpeedButton1.Enabled := undoManager.CanRedo;
-  Paste1.Enabled := Clipboard.HasFormat(CF_BITMAP) or Clipboard.HasFormat(CF_TEXT);
-  PasteSpeedButton1.Enabled := Clipboard.HasFormat(CF_BITMAP) or Clipboard.HasFormat(CF_TEXT);
   ZoomInSpeedButton1.Enabled := zoom < MAXZOOM;
   ZoomOutSpeedButton1.Enabled := zoom > MINZOOM;
   if needsupdate then
@@ -450,7 +444,6 @@ end;
 
 procedure TForm1.Edit1Click(Sender: TObject);
 begin
-  Paste1.Enabled := Clipboard.HasFormat(CF_BITMAP) or Clipboard.HasFormat(CF_TEXT);
   Undo1.Enabled := undoManager.CanUndo;
   Redo1.Enabled := undoManager.CanRedo;
 end;
@@ -1264,7 +1257,6 @@ procedure TForm1.PaintBoxPopupMenu1Popup(Sender: TObject);
 begin
   Undo2.Enabled := undoManager.CanUndo;
   Redo2.Enabled := undoManager.CanRedo;
-  Paste2.Enabled := Clipboard.HasFormat(CF_BITMAP) or Clipboard.HasFormat(CF_TEXT);
 end;
 
 procedure TForm1.Export1Click(Sender: TObject);
