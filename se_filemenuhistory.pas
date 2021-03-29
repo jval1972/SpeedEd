@@ -19,7 +19,7 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  Settings(ini file)
+//  File Menu History
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr

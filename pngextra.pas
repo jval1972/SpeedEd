@@ -3,7 +3,7 @@ unit pngextra;
 interface
 
 uses
-  Windows, Graphics, Messages, SysUtils, Classes, Controls, pngimage1, Buttons,
+  Windows, Graphics, Messages, SysUtils, Classes, Controls, pngimage, Buttons,
   ExtCtrls;
 
 type

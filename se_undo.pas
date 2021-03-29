@@ -19,7 +19,7 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  Settings(ini file)
+//  Undo/Redo manager
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
@@ -30,7 +30,8 @@ unit se_undo;
 
 interface
 
-uses Windows, SysUtils, Classes, se_binary, zLibPas;
+uses
+  Windows, SysUtils, Classes, se_binary, zLibPas;
 
 type
   TStreamType = (sstMemory, sstFile);
@@ -86,7 +87,7 @@ type
   PUndoStack = ^TUndoStack;
   TUndoStack = TLimitedSizeStack;
 
-  TOnStreamOperationEvent = procedure (s: TStream) of object;
+  TOnStreamOperationEvent = procedure (const s: TStream) of object;
 
   TUndoRedoManager = class(TObject)
   private

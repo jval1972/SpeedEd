@@ -19,7 +19,7 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  Binary data (Undo/Redo helper)
+//  Compressed binary data
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
@@ -30,8 +30,7 @@ unit se_binary;
 
 interface
 
-uses
-  SysUtils, Classes, zLibpas, Math;
+uses SysUtils, Classes, zLibpas, Math;
 
 type
   TZProgressStage = (psStarting, psRunning, psEnding);
@@ -99,10 +98,17 @@ type
     destructor Destroy; override;
     procedure Clear; virtual;
     function AsText: string;
+  { Οι LoadFromFile, SaveToFile, LoadFromStream, SaveToStream όταν η παράμετρος
+    Compressed είναι false προυποθέτουν το ότι στο αρχείο ή στο Stream υπάρχει
+    ένα TBinary (δηλαδή διαβάζουμε όλα τα δεδομένα του αρχείου ή του Stream).
+    Αν είναι true, τότε γράφεται στην αρχή το μέγεθος του συμπιεσμένου Stream
+    με αποτέλεσμα να ξέρουμε πόσα data να διαβάσουμε! Με αυτό τον τρόπο μπορούμε
+    να διαβάζουμε σειριακά πολλά αντικείμενα TBinary. }
     procedure LoadFromFile(const Filename: string; Compressed: boolean = false); virtual;
     procedure SaveToFile(const Filename: string; Compressed: boolean = false); virtual;
     procedure LoadFromStream(Stream: TStream; Compressed: boolean); virtual;
     procedure SaveToStream(Stream: TStream; Compressed: boolean); virtual;
+
     property Empty: Boolean read GetEmpty;
     property Memory: Pointer read GetMemory;
     property Data: TMemoryStream read GetData;

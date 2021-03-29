@@ -19,7 +19,7 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  Settings(ini file)
+//  Ini file
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
@@ -30,9 +30,9 @@ unit se_defs;
 
 interface
 
-function ter_LoadSettingFromFile(const fn: string): boolean;
+function se_LoadSettingFromFile(const fn: string): boolean;
 
-procedure ter_SaveSettingsToFile(const fn: string);
+procedure se_SaveSettingsToFile(const fn: string);
 
 const
   MAXHISTORYPATH = 2048;
@@ -40,6 +40,9 @@ const
 type
   bigstring_t = array[0..MAXHISTORYPATH - 1] of char;
   bigstring_p = ^bigstring_t;
+
+const
+  OPT_TO_FLOAT = 10000;
 
 var
   opt_filemenuhistory0: bigstring_t;
@@ -52,11 +55,8 @@ var
   opt_filemenuhistory7: bigstring_t;
   opt_filemenuhistory8: bigstring_t;
   opt_filemenuhistory9: bigstring_t;
-  opt_lastwadfile: bigstring_t;
-  opt_defaultpalette: bigstring_t;
-  opt_lastpk3file: bigstring_t;
-  opt_lastdirectory: bigstring_t;
-  opt_linearscaling: boolean = true;
+  opt_showgrid: boolean = False;
+  opt_zoom: integer = 0;
 
 function bigstringtostring(const bs: bigstring_p): string;
 
@@ -77,7 +77,7 @@ type
   end;
 
 const
-  NUMSETTINGS = 18;
+  NUMSETTINGS = 14;
 
 var
   Settings: array[0..NUMSETTINGS - 1] of TSettingItem = (
@@ -137,39 +137,19 @@ var
       location: @opt_filemenuhistory9;
     ),
     (
-      desc: '[Resources]';
-      typeof: tstDevider;
-      location: nil;
-    ),
-    (
-      desc: 'WAD';
-      typeof: tstBigString;
-      location: @opt_lastwadfile;
-    ),
-    (
-      desc: 'PALETTE';
-      typeof: tstBigString;
-      location: @opt_defaultpalette;
-    ),
-    (
-      desc: 'PK3';
-      typeof: tstBigString;
-      location: @opt_lastpk3file;
-    ),
-    (
-      desc: 'DIRECTORY';
-      typeof: tstBigString;
-      location: @opt_lastdirectory;
-    ),
-    (
       desc: '[Options]';
       typeof: tstDevider;
       location: nil;
     ),
     (
-      desc: 'LINEARSCALING';
+      desc: 'SHOWGRID';
       typeof: tstBoolean;
-      location: @opt_linearscaling;
+      location: @opt_showgrid;
+    ),
+    (
+      desc: 'ZOOM';
+      typeof: tstInteger;
+      location: @opt_zoom;
     )
   );
 
@@ -231,7 +211,7 @@ begin
   end;
 end;
 
-procedure ter_SaveSettingsToFile(const fn: string);
+procedure se_SaveSettingsToFile(const fn: string);
 var
   s: TStringList;
   i: integer;
@@ -261,7 +241,7 @@ begin
   end;
 end;
 
-function ter_LoadSettingFromFile(const fn: string): boolean;
+function se_LoadSettingFromFile(const fn: string): boolean;
 var
   s: TStringList;
   i, j: integer;
@@ -270,10 +250,10 @@ var
 begin
   if not FileExists(fn) then
   begin
-    Result := False;
-    Exit;
+    result := false;
+    exit;
   end;
-  Result := True;
+  result := true;
 
   s := TStringList.Create;
   try

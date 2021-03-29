@@ -33,38 +33,19 @@ uses
   FastMM4Messages in 'FastMM4Messages.pas',
   Forms,
   main in 'main.pas' {Form1},
-  se_undo in 'se_undo.pas',
-  se_binary in 'se_binary.pas',
-  se_filemenuhistory in 'se_filemenuhistory.pas',
-  se_utils in 'se_utils.pas',
   pngextra in 'pngextra.pas',
+  pngimage in 'pngimage.pas',
   pnglang in 'pnglang.pas',
   xTGA in 'xTGA.pas',
   zBitmap in 'zBitmap.pas',
   zlibpas in 'zlibpas.pas',
-  se_slider in 'se_slider.pas',
-  se_class in 'se_class.pas',
-  se_wadreader in 'se_wadreader.pas',
-  pngimage1 in 'pngimage1.pas',
+  se_utils in 'se_utils.pas',
+  se_binary in 'se_binary.pas',
+  se_filemenuhistory in 'se_filemenuhistory.pas',
+  se_undo in 'se_undo.pas',
   se_defs in 'se_defs.pas',
-  se_wadwriter in 'se_wadwriter.pas',
-  se_wad in 'se_wad.pas',
-  se_doomdata in 'se_doomdata.pas',
-  se_palettes in 'se_palettes.pas',
-  se_pk3 in 'se_pk3.pas',
-  frm_loadimagehelper in 'frm_loadimagehelper.pas' {LoadImageHelperForm},
-  se_colorpickerbutton in 'se_colorpickerbutton.pas',
-  se_colorpalettebmz in 'se_colorpalettebmz.pas',
-  se_cursors in 'se_cursors.pas',
-  se_quantize in 'se_quantize.pas',
-  xTIFF in 'xTIFF.pas',
-  LibDelphi in 'LibDelphi.pas',
-  LibJpegDelphi in 'LibJpegDelphi.pas',
-  LibTiffDelphi in 'LibTiffDelphi.pas',
-  se_tmp in 'se_tmp.pas',
-  se_doomutils in 'se_doomutils.pas',
-  se_filters in 'se_filters.pas',
-  frm_inputnumber in 'frm_inputnumber.pas' {InputNumberForm},
+  se_maptexture in 'se_maptexture.pas',
+  se_grafs in 'se_grafs.pas',
   GR32 in 'Graphics32\GR32.pas',
   GR32_ArrowHeads in 'Graphics32\GR32_ArrowHeads.pas',
   GR32_Backends in 'Graphics32\GR32_Backends.pas',
@@ -106,15 +87,13 @@ uses
   GR32_VectorUtils in 'Graphics32\GR32_VectorUtils.pas',
   GR32_VPR in 'Graphics32\GR32_VPR.pas',
   GR32_VPR2 in 'Graphics32\GR32_VPR2.pas',
-  GR32_XPThemes in 'Graphics32\GR32_XPThemes.pas',
-  frm_remapcolorchannels in 'frm_remapcolorchannels.pas' {RemapColorChannelsForm};
+  GR32_XPThemes in 'Graphics32\GR32_XPThemes.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.Title := 'WAD Painter';
+  Application.Title := 'GLSpeed map Editor utilities';
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
-

@@ -1,25 +1,23 @@
-# WAD Painter
-WADPaint is a tool that can create textures from DOOM WAD & PK3 file resources.
+# ENDEDIT 
 
+ENDEDIT is a B800 text screen editor. Such screens were usually displayed when exiting Dos games. 
 
 ## Features
-PNG, TIFF and BMP texture export
-
-WAD & PK3 file system
+PNG, JPG and BMP image export
 
 Multiple Undo/Redo
 
-Graphic Filters
+Easy to use drawing tools
 
-Color manipulation
-
-## Downloads
-[version 1.1.2.26 (20210217 - win32)](https://sourceforge.net/projects/wad-painter/files/WADPAINT_1.1/WADPAINT_1.1.2.26_win32.zip/download)
-
-[version 1.0.1.24 (20210215 - win32)](https://sourceforge.net/projects/wad-painter/files/WADPAINT_1.0/WADPAINT_1.0.1.24_win32.zip/download)
+## Donwloads
+[version 1.0.1.9 (20210306 - win32)](https://sourceforge.net/projects/endedit/files/ENDEDIT_1.0/ENDEDIT_1.0.1.9_bin.zip/download)
 
 ## Screenshots
 
-![Screenshot1](https://i.postimg.cc/qBjWmJjL/Image1.png "Screenshot1")
+![Screenshot 1](https://i.postimg.cc/gjGbXhX8/Image1.png "Screenshot 1")
 
-![Screenshot2](https://i.postimg.cc/hPv8f6q3/Image4.png "Screenshot1")
+![Screenshot 2](https://i.postimg.cc/mkVfQrCq/Image2.png "Screenshot 2")
+
+![Screenshot 3](https://i.postimg.cc/NGxchdS4/Image3.png "Screenshot 3")
+
+
