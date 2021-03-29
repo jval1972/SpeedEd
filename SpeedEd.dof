@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=0
 Release=1
-Build=9
+Build=11
 Debug=0
 PreRelease=0
 Special=0
@@ -125,13 +125,13 @@ Locale=1033
 CodePage=1252
 [Version Info Keys]
 CompanyName=Jim Valavanis
-FileDescription=A tool for creating ENDTEXT screens
-FileVersion=1.0.1.9
-InternalName=ENDEDIT
+FileDescription=GLSpeed map Editor utilities
+FileVersion=1.0.1.11
+InternalName=SpeedEd
 LegalCopyright=© 2021, jvalavanis@gmail.com
 LegalTrademarks=© 2021, jvalavanis@gmail.com
-OriginalFilename=ENDEDIT.exe
-ProductName=ENDEDIT
+OriginalFilename=SpeedEd.exe
+ProductName=SpeedEd
 ProductVersion=1.0
 [HistoryLists\hlDebugSourcePath]
 Count=2
