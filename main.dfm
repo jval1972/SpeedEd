@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 102
-  Top = 72
+  Left = 86
+  Top = 53
   Width = 956
   Height = 720
   Caption = 'GLSpeed map Editor utilities'
@@ -2393,7 +2393,7 @@ object Form1: TForm1
       TabOrder = 0
       object FreeDrawSpeedButton: TSpeedButton
         Left = 12
-        Top = 92
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Free Draw'
@@ -2444,8 +2444,8 @@ object Form1: TForm1
         OnClick = FreeDrawSpeedButtonClick
       end
       object FloodFillSpeedButton: TSpeedButton
-        Left = 84
-        Top = 92
+        Left = 156
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Flood Fill'
@@ -2495,8 +2495,8 @@ object Form1: TForm1
         OnClick = FloodFillSpeedButtonClick
       end
       object RectSpeedButton: TSpeedButton
-        Left = 12
-        Top = 116
+        Left = 60
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Rectangle'
@@ -2547,8 +2547,8 @@ object Form1: TForm1
         OnClick = RectSpeedButtonClick
       end
       object FillRectSpeedButton: TSpeedButton
-        Left = 36
-        Top = 116
+        Left = 84
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Filled Rectangle'
@@ -2600,7 +2600,7 @@ object Form1: TForm1
       end
       object LineSpeedButton: TSpeedButton
         Left = 36
-        Top = 92
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Line'
@@ -2651,8 +2651,8 @@ object Form1: TForm1
         OnClick = LineSpeedButtonClick
       end
       object EraseTextSpeedButton: TSpeedButton
-        Left = 60
-        Top = 92
+        Left = 180
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Erase text'
@@ -2691,8 +2691,8 @@ object Form1: TForm1
         OnClick = EraseTextSpeedButtonClick
       end
       object EclipseSpeedButton: TSpeedButton
-        Left = 60
-        Top = 116
+        Left = 108
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Eclipse'
@@ -2743,8 +2743,8 @@ object Form1: TForm1
         OnClick = EclipseSpeedButtonClick
       end
       object FilledEclipseSpeedButton: TSpeedButton
-        Left = 84
-        Top = 116
+        Left = 132
+        Top = 20
         Width = 23
         Height = 22
         Hint = 'Filled Eclipse'
@@ -2796,7 +2796,7 @@ object Form1: TForm1
       end
       object BackgroundPalettePanel1: TPanel
         Left = 8
-        Top = 8
+        Top = 48
         Width = 104
         Height = 80
         Caption = ' '
