@@ -1069,7 +1069,7 @@ object Form1: TForm1
       Top = 2
       Width = 58
       Height = 56
-      Hint = 'Open an ENDTEXT from disk'
+      Hint = 'Open an existing file from disk'
       Caption = 'Open'
       Flat = True
       Glyph.Data = {
@@ -1179,7 +1179,7 @@ object Form1: TForm1
       Top = 2
       Width = 58
       Height = 56
-      Hint = 'Save ENDTEXT to disk'
+      Hint = 'Save the current file to disk'
       Caption = 'Save'
       Flat = True
       Glyph.Data = {
@@ -2402,7 +2402,7 @@ object Form1: TForm1
         Top = 20
         Width = 23
         Height = 22
-        Hint = 'Erase text'
+        Hint = 'Clear'
         GroupIndex = 1
         Flat = True
         Glyph.Data = {
@@ -3080,7 +3080,7 @@ object Form1: TForm1
       end
       object Export1: TMenuItem
         Caption = 'Export'
-        Hint = 'Export current screen to an image file on disk'
+        Hint = 'Export as image '
         ShortCut = 16453
         OnClick = Export1Click
       end
@@ -3158,11 +3158,6 @@ object Form1: TForm1
     end
     object Help1: TMenuItem
       Caption = 'Help'
-      object Onlinedocumentation1: TMenuItem
-        Caption = 'Online documentation'
-        Hint = 'Displays online help'
-        ShortCut = 112
-      end
       object About1: TMenuItem
         Caption = 'About'
         Hint = 'Display version information'
