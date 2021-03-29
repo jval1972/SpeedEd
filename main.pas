@@ -287,6 +287,8 @@ type
     N10: TMenuItem;
     RemapColorChannels1: TMenuItem;
     GaussianBlur1: TMenuItem;
+    SpeedHastePalette1: TMenuItem;
+    PaletteSpeedHaste1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure NewButton1Click(Sender: TObject);
@@ -391,6 +393,8 @@ type
     procedure NegativeImage1Click(Sender: TObject);
     procedure RemapColorChannels1Click(Sender: TObject);
     procedure GaussianBlur1Click(Sender: TObject);
+    procedure SpeedHastePalette1Click(Sender: TObject);
+    procedure PaletteSpeedHaste1Click(Sender: TObject);
   private
     { Private declarations }
     ffilename: string;
@@ -2172,17 +2176,19 @@ end;
 procedure TForm1.CheckPaletteName;
 begin
   if fpalettename <> spalDEFAULT then
-    if fpalettename <> spalDOOM then
-      if fpalettename <> spalHERETIC then
-        if fpalettename <> spalHEXEN then
-          if fpalettename <> spalSTRIFE then
-            if fpalettename <> spalRADIX then
-              if fpalettename <> spalGRAYSCALE then
-                fpalettename := spalDEFAULT;
+    if fpalettename <> spalSPEED then
+      if fpalettename <> spalDOOM then
+        if fpalettename <> spalHERETIC then
+          if fpalettename <> spalHEXEN then
+            if fpalettename <> spalSTRIFE then
+              if fpalettename <> spalRADIX then
+                if fpalettename <> spalGRAYSCALE then
+                  fpalettename := spalDEFAULT;
 end;
 
 procedure TForm1.PalettePopupMenu1Popup(Sender: TObject);
 begin
+  PaletteSpeedHaste1.Checked := fpalettename = spalSPEED;
   PaletteDoom1.Checked := fpalettename = spalDOOM;
   PaletteHeretic1.Checked := fpalettename = spalHERETIC;
   PaletteHexen1.Checked := fpalettename = spalHEXEN;
@@ -3499,6 +3505,17 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TForm1.SpeedHastePalette1Click(Sender: TObject);
+begin
+  ConvertToPalette(spalSPEED);
+end;
+
+procedure TForm1.PaletteSpeedHaste1Click(Sender: TObject);
+begin
+  fpalettename := spalSPEED;
+  NotifyFlatsListBox;
 end;
 
 end.

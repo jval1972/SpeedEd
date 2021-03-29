@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 39
   Width = 1037
   Height = 757
-  Caption = 'WAD Painter'
+  Caption = 'GLSpeed Editor Utilities'
   Color = clBtnFace
   Constraints.MinHeight = 680
   Constraints.MinWidth = 680
@@ -2677,7 +2677,7 @@ object Form1: TForm1
                         Left = 0
                         Top = 0
                         Width = 302
-                        Height = 212
+                        Height = 213
                         Align = alClient
                         BorderWidth = 2
                         Caption = ' '
@@ -2686,7 +2686,7 @@ object Form1: TForm1
                           Left = 3
                           Top = 3
                           Width = 296
-                          Height = 206
+                          Height = 207
                           Align = alClient
                           BorderStyle = bsNone
                           ItemHeight = 13
@@ -6095,7 +6095,7 @@ object Form1: TForm1
                         Left = 0
                         Top = 0
                         Width = 302
-                        Height = 212
+                        Height = 213
                         Align = alClient
                         BorderWidth = 2
                         Caption = ' '
@@ -6104,7 +6104,7 @@ object Form1: TForm1
                           Left = 3
                           Top = 3
                           Width = 296
-                          Height = 206
+                          Height = 207
                           Align = alClient
                           BorderStyle = bsNone
                           ItemHeight = 13
@@ -7844,7 +7844,7 @@ object Form1: TForm1
                         Left = 0
                         Top = 0
                         Width = 302
-                        Height = 212
+                        Height = 213
                         Align = alClient
                         BorderWidth = 2
                         Caption = ' '
@@ -7853,7 +7853,7 @@ object Form1: TForm1
                           Left = 3
                           Top = 3
                           Width = 296
-                          Height = 206
+                          Height = 207
                           Align = alClient
                           BorderStyle = bsNone
                           ItemHeight = 13
@@ -9795,6 +9795,10 @@ object Form1: TForm1
       object N1: TMenuItem
         Caption = '-'
       end
+      object SpeedHastePalette1: TMenuItem
+        Caption = 'Speed Haste Palette'
+        OnClick = SpeedHastePalette1Click
+      end
       object Doom1: TMenuItem
         Caption = 'Doom Palette'
         OnClick = Doom1Click
@@ -9944,6 +9948,10 @@ object Form1: TForm1
     end
     object N6: TMenuItem
       Caption = '-'
+    end
+    object PaletteSpeedHaste1: TMenuItem
+      Caption = 'Speed Haste'
+      OnClick = PaletteSpeedHaste1Click
     end
     object PaletteDoom1: TMenuItem
       Caption = 'Doom/Doom2'
