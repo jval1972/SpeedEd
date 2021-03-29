@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,10 +23,10 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-unit wp_colorpickerbutton;
+unit se_colorpickerbutton;
 
 // This unit contains a special speed button which can be used to let the user select
 // a specific color. The control does not use the standard Windows color dialog, but

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,10 +23,10 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-unit wp_wadwriter;
+unit se_wadwriter;
 
 interface
 
@@ -54,7 +54,7 @@ function AddDataToWAD(const wad: TWADWriter; const lumpname, data: string): bool
 implementation
 
 uses
-  wp_wad;
+  se_wad;
 
 constructor TWadWriter.Create;
 begin

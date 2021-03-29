@@ -1,8 +1,8 @@
 object Form1: TForm1
   Left = 43
-  Top = 40
+  Top = 39
   Width = 1037
-  Height = 756
+  Height = 757
   Caption = 'WAD Painter'
   Color = clBtnFace
   Constraints.MinHeight = 680
@@ -1059,12 +1059,12 @@ object Form1: TForm1
   object Splitter1: TSplitter
     Left = 320
     Top = 40
-    Height = 638
+    Height = 639
     OnMoved = Splitter1Moved
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 678
+    Top = 679
     Width = 1021
     Height = 19
     Panels = <
@@ -2136,7 +2136,7 @@ object Form1: TForm1
     Left = 0
     Top = 40
     Width = 320
-    Height = 638
+    Height = 639
     Align = alLeft
     BevelOuter = bvNone
     Caption = ' '
@@ -2516,7 +2516,7 @@ object Form1: TForm1
       Left = 0
       Top = 153
       Width = 320
-      Height = 485
+      Height = 486
       Align = alClient
       BevelOuter = bvNone
       Caption = ' '
@@ -2525,7 +2525,7 @@ object Form1: TForm1
         Left = 0
         Top = 0
         Width = 320
-        Height = 485
+        Height = 486
         ActivePage = WADTabSheet1
         Align = alClient
         TabOrder = 0
@@ -2536,7 +2536,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 312
-            Height = 457
+            Height = 458
             Align = alClient
             BevelOuter = bvNone
             Caption = ' '
@@ -2637,7 +2637,7 @@ object Form1: TForm1
               Left = 0
               Top = 49
               Width = 312
-              Height = 408
+              Height = 409
               Align = alClient
               BevelOuter = bvNone
               BorderWidth = 1
@@ -2647,7 +2647,7 @@ object Form1: TForm1
                 Left = 1
                 Top = 1
                 Width = 310
-                Height = 406
+                Height = 407
                 ActivePage = WADPatchesTabSheet
                 Align = alClient
                 Style = tsFlatButtons
@@ -2659,7 +2659,7 @@ object Form1: TForm1
                     Left = 0
                     Top = 0
                     Width = 302
-                    Height = 375
+                    Height = 376
                     Align = alClient
                     BevelOuter = bvNone
                     Caption = ' '
@@ -2668,7 +2668,7 @@ object Form1: TForm1
                       Left = 0
                       Top = 0
                       Width = 302
-                      Height = 212
+                      Height = 213
                       Align = alClient
                       BevelOuter = bvNone
                       Caption = ' '
@@ -2697,7 +2697,7 @@ object Form1: TForm1
                     end
                     object WADPreviewFlatPanel: TPanel
                       Left = 0
-                      Top = 212
+                      Top = 213
                       Width = 302
                       Height = 163
                       Align = alBottom
@@ -4328,7 +4328,7 @@ object Form1: TForm1
                     Left = 0
                     Top = 0
                     Width = 302
-                    Height = 375
+                    Height = 376
                     Align = alClient
                     BevelOuter = bvNone
                     Caption = ' '
@@ -4337,7 +4337,7 @@ object Form1: TForm1
                       Left = 0
                       Top = 0
                       Width = 302
-                      Height = 212
+                      Height = 213
                       Align = alClient
                       BevelOuter = bvNone
                       Caption = ' '
@@ -4346,7 +4346,7 @@ object Form1: TForm1
                         Left = 0
                         Top = 0
                         Width = 302
-                        Height = 212
+                        Height = 213
                         Align = alClient
                         BorderWidth = 2
                         Caption = ' '
@@ -4355,7 +4355,7 @@ object Form1: TForm1
                           Left = 3
                           Top = 3
                           Width = 296
-                          Height = 206
+                          Height = 207
                           Align = alClient
                           BorderStyle = bsNone
                           ItemHeight = 13
@@ -4366,7 +4366,7 @@ object Form1: TForm1
                     end
                     object WADPreviewPatchPanel: TPanel
                       Left = 0
-                      Top = 212
+                      Top = 213
                       Width = 302
                       Height = 163
                       Align = alBottom
@@ -6001,7 +6001,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 312
-            Height = 457
+            Height = 458
             Align = alClient
             BevelOuter = bvNone
             Caption = ' '
@@ -6056,7 +6056,7 @@ object Form1: TForm1
               Left = 0
               Top = 49
               Width = 312
-              Height = 408
+              Height = 409
               Align = alClient
               BevelOuter = bvNone
               BorderWidth = 1
@@ -6066,7 +6066,7 @@ object Form1: TForm1
                 Left = 1
                 Top = 1
                 Width = 310
-                Height = 406
+                Height = 407
                 ActivePage = PK3TexturesTabSheet
                 Align = alClient
                 Style = tsFlatButtons
@@ -6077,7 +6077,7 @@ object Form1: TForm1
                     Left = 0
                     Top = 0
                     Width = 302
-                    Height = 375
+                    Height = 376
                     Align = alClient
                     BevelOuter = bvNone
                     Caption = ' '
@@ -6086,7 +6086,7 @@ object Form1: TForm1
                       Left = 0
                       Top = 0
                       Width = 302
-                      Height = 212
+                      Height = 213
                       Align = alClient
                       BevelOuter = bvNone
                       Caption = ' '
@@ -6115,7 +6115,7 @@ object Form1: TForm1
                     end
                     object PK3PreviewTexturePanel: TPanel
                       Left = 0
-                      Top = 212
+                      Top = 213
                       Width = 302
                       Height = 163
                       Align = alBottom
@@ -7750,7 +7750,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 312
-            Height = 457
+            Height = 458
             Align = alClient
             BevelOuter = bvNone
             Caption = ' '
@@ -7805,7 +7805,7 @@ object Form1: TForm1
               Left = 0
               Top = 49
               Width = 312
-              Height = 408
+              Height = 409
               Align = alClient
               BevelOuter = bvNone
               BorderWidth = 1
@@ -7815,7 +7815,7 @@ object Form1: TForm1
                 Left = 1
                 Top = 1
                 Width = 310
-                Height = 406
+                Height = 407
                 ActivePage = DirTexturesTabSheet
                 Align = alClient
                 Style = tsFlatButtons
@@ -7826,7 +7826,7 @@ object Form1: TForm1
                     Left = 0
                     Top = 0
                     Width = 302
-                    Height = 375
+                    Height = 376
                     Align = alClient
                     BevelOuter = bvNone
                     Caption = ' '
@@ -7835,7 +7835,7 @@ object Form1: TForm1
                       Left = 0
                       Top = 0
                       Width = 302
-                      Height = 212
+                      Height = 213
                       Align = alClient
                       BevelOuter = bvNone
                       Caption = ' '
@@ -7864,7 +7864,7 @@ object Form1: TForm1
                     end
                     object DIRPreviewTexturePanel: TPanel
                       Left = 0
-                      Top = 212
+                      Top = 213
                       Width = 302
                       Height = 163
                       Align = alBottom
@@ -9499,7 +9499,7 @@ object Form1: TForm1
             Left = 0
             Top = 0
             Width = 312
-            Height = 457
+            Height = 458
             Align = alClient
             BevelOuter = bvNone
             Caption = ' '
@@ -9544,7 +9544,7 @@ object Form1: TForm1
               Left = 0
               Top = 49
               Width = 312
-              Height = 408
+              Height = 409
               Align = alClient
               BevelOuter = bvNone
               BorderWidth = 1
@@ -9554,7 +9554,7 @@ object Form1: TForm1
                 Left = 1
                 Top = 1
                 Width = 310
-                Height = 406
+                Height = 407
                 ActivePage = ColorPaletteTabSheet
                 Align = alClient
                 Style = tsFlatButtons
@@ -9633,7 +9633,7 @@ object Form1: TForm1
     Left = 323
     Top = 40
     Width = 698
-    Height = 638
+    Height = 639
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 3

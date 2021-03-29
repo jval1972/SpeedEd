@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
 unit main;
@@ -33,8 +33,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, xTGA, jpeg, zBitmap, ComCtrls, ExtCtrls, Buttons, Menus, FileCtrl,
-  StdCtrls, AppEvnts, ExtDlgs, clipbrd, ToolWin, wp_class, wp_undo,
-  wp_filemenuhistory, wp_slider, PngImage1, wp_pk3, wp_colorpickerbutton,
+  StdCtrls, AppEvnts, ExtDlgs, clipbrd, ToolWin, se_class, se_undo,
+  se_filemenuhistory, se_slider, PngImage1, se_pk3, se_colorpickerbutton,
   xTIFF, ImgList;
 
 type
@@ -491,21 +491,21 @@ var
 implementation
 
 uses
-  wp_defs,
-  wp_utils,
+  se_defs,
+  se_utils,
   frm_newterrain,
-  wp_wadreader,
-  wp_palettes,
+  se_wadreader,
+  se_palettes,
   frm_loadimagehelper,
   frm_inputnumber,
   frm_remapcolorchannels,
-  wp_colorpalettebmz,
-  wp_cursors,
-  wp_doomdata,
-  wp_doomutils,
-  wp_quantize,
-  wp_filters,
-  wp_wad;
+  se_colorpalettebmz,
+  se_cursors,
+  se_doomdata,
+  se_doomutils,
+  se_quantize,
+  se_filters,
+  se_wad;
 
 {$R *.dfm}
 

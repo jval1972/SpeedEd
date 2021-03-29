@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,14 +23,14 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-unit wp_undo;
+unit se_undo;
 
 interface
 
-uses Windows, SysUtils, Classes, wp_binary, zLibPas;
+uses Windows, SysUtils, Classes, se_binary, zLibPas;
 
 type
   TStreamType = (sstMemory, sstFile);

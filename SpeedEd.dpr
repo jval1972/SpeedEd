@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,48 +23,48 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-program WADPaint;
+program SpeedEd;
 
 uses
   FastMM4 in 'FastMM4.pas',
   FastMM4Messages in 'FastMM4Messages.pas',
   Forms,
   main in 'main.pas' {Form1},
-  wp_undo in 'wp_undo.pas',
-  wp_binary in 'wp_binary.pas',
-  wp_filemenuhistory in 'wp_filemenuhistory.pas',
-  wp_utils in 'wp_utils.pas',
+  se_undo in 'se_undo.pas',
+  se_binary in 'se_binary.pas',
+  se_filemenuhistory in 'se_filemenuhistory.pas',
+  se_utils in 'se_utils.pas',
   pngextra in 'pngextra.pas',
   pnglang in 'pnglang.pas',
   xTGA in 'xTGA.pas',
   zBitmap in 'zBitmap.pas',
   zlibpas in 'zlibpas.pas',
-  wp_slider in 'wp_slider.pas',
+  se_slider in 'se_slider.pas',
   frm_newterrain in 'frm_newterrain.pas' {NewForm},
-  wp_class in 'wp_class.pas',
-  wp_wadreader in 'wp_wadreader.pas',
+  se_class in 'se_class.pas',
+  se_wadreader in 'se_wadreader.pas',
   pngimage1 in 'pngimage1.pas',
-  wp_defs in 'wp_defs.pas',
-  wp_wadwriter in 'wp_wadwriter.pas',
-  wp_wad in 'wp_wad.pas',
-  wp_doomdata in 'wp_doomdata.pas',
-  wp_palettes in 'wp_palettes.pas',
-  wp_pk3 in 'wp_pk3.pas',
+  se_defs in 'se_defs.pas',
+  se_wadwriter in 'se_wadwriter.pas',
+  se_wad in 'se_wad.pas',
+  se_doomdata in 'se_doomdata.pas',
+  se_palettes in 'se_palettes.pas',
+  se_pk3 in 'se_pk3.pas',
   frm_loadimagehelper in 'frm_loadimagehelper.pas' {LoadImageHelperForm},
-  wp_colorpickerbutton in 'wp_colorpickerbutton.pas',
-  wp_colorpalettebmz in 'wp_colorpalettebmz.pas',
-  wp_cursors in 'wp_cursors.pas',
-  wp_quantize in 'wp_quantize.pas',
+  se_colorpickerbutton in 'se_colorpickerbutton.pas',
+  se_colorpalettebmz in 'se_colorpalettebmz.pas',
+  se_cursors in 'se_cursors.pas',
+  se_quantize in 'se_quantize.pas',
   xTIFF in 'xTIFF.pas',
   LibDelphi in 'LibDelphi.pas',
   LibJpegDelphi in 'LibJpegDelphi.pas',
   LibTiffDelphi in 'LibTiffDelphi.pas',
-  wp_tmp in 'wp_tmp.pas',
-  wp_doomutils in 'wp_doomutils.pas',
-  wp_filters in 'wp_filters.pas',
+  se_tmp in 'se_tmp.pas',
+  se_doomutils in 'se_doomutils.pas',
+  se_filters in 'se_filters.pas',
   frm_inputnumber in 'frm_inputnumber.pas' {InputNumberForm},
   GR32 in 'Graphics32\GR32.pas',
   GR32_ArrowHeads in 'Graphics32\GR32_ArrowHeads.pas',

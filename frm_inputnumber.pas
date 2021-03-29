@@ -33,7 +33,7 @@ implementation
 {$R *.dfm}
 
 uses
-  wp_utils;
+  se_utils;
 
 function GetInputNumber(const aTitle, aPrompt: string; const minvalue, maxvalue: integer;
   var value: integer): boolean;

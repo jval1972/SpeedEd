@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//  WADPaint: Texture Generator from WAD resources
+//  SpeedEd: GLSpeed map Editor utilities
 //  Copyright (C) 2021 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
@@ -23,16 +23,16 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/wad-painter/
+//  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-unit wp_doomutils;
+unit se_doomutils;
 
 interface
 
 uses
   Graphics,
-  wp_utils;
+  se_utils;
 
 function IsValidWADPatchImage(const buf: pointer; const size: integer): boolean;
 
@@ -42,7 +42,7 @@ function DoomPatchToBitmap(const buf: pointer; const size: integer;
 implementation
 
 uses
-  wp_doomdata;
+  se_doomdata;
 
 function IsValidWADPatchImage(const buf: pointer; const size: integer): boolean;
 var
