@@ -125,6 +125,7 @@ type
     RotateSpeedButton90: TSpeedButton;
     RotateSpeedButton180: TSpeedButton;
     RotateSpeedButton270: TSpeedButton;
+    SelectSpeedButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -183,6 +184,7 @@ type
     procedure RotateSpeedButton90Click(Sender: TObject);
     procedure RotateSpeedButton180Click(Sender: TObject);
     procedure RotateSpeedButton270Click(Sender: TObject);
+    procedure SelectSpeedButtonClick(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -212,11 +214,14 @@ type
     anglerotated: array[0..SCREENSIZEX - 1, 0..SCREENSIZEY - 1] of boolean;
     curangle: integer;
     bkpalx, bkpaly: integer;
+    selRect: TRect;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
     procedure InvalidatePaintBox;
     procedure DrawGrid;
+    procedure DrawSelection;
+    procedure NormalizeSelectionRect;
     function ZoomValueX(const X: Integer): Integer;
     function ZoomValueY(const Y: Integer): Integer;
     procedure LLeftMousePaintAt(const X, Y: integer);
@@ -248,7 +253,10 @@ type
     procedure EditActionFillEclipse(const X, Y: integer);
     procedure EditActionRotateRight(const X, Y: integer);
     procedure EditActionRotateLeft(const X, Y: integer);
+    procedure EditActionSelectionAt(const X, Y: integer);
     procedure DoExportImage(const imgfname: string);
+    procedure ClearSelection;
+    function HasSelection: boolean;
   public
     { Public declarations }
   end;
@@ -290,6 +298,8 @@ begin
   lmousemovey := 0;
 
   curangle := 0;
+
+  ClearSelection;
 
   buffer := TBitmap.Create;
   buffer.Width := SCREENSIZEX * TILESIZE;
@@ -796,6 +806,17 @@ begin
   maptexture.Angles[X, Y] := ang;
 end;
 
+procedure TForm1.EditActionSelectionAt(const X, Y: integer);
+begin
+  if not IsIntInRange(X, 0, SCREENSIZEX - 1) then
+    Exit;
+  if not IsIntInRange(Y, 0, SCREENSIZEY - 1) then
+    Exit;
+    
+  selRect.Right := X;
+  selRect.Bottom := Y;
+end;
+
 procedure TForm1.LLeftMousePaintAt(const X, Y: integer);
 begin
   if not lmousedown then
@@ -819,7 +840,9 @@ begin
   else if RotateRightSpeedButton.Down then
     EditActionRotateRight(X, Y)
   else if RotateLeftSpeedButton.Down then
-    EditActionRotateLeft(X, Y);
+    EditActionRotateLeft(X, Y)
+  else if SelectSpeedButton.Down then
+    EditActionSelectionAt(X, Y);
 end;
 
 procedure TForm1.LLeftMousePaintTo(const X, Y: integer);
@@ -892,8 +915,12 @@ begin
     LLeftMousePaintAt(X, Y);
   end;
 
-  Changed := True;
-  needbuffersupdate := True;
+  needsupdate := True;
+  if not SelectSpeedButton.Down then
+  begin
+    Changed := True;
+    needbuffersupdate := True;
+  end;
   InvalidatePaintBox;
 end;
 
@@ -902,7 +929,8 @@ procedure TForm1.PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if button = mbLeft then
   begin
-    undoManager.SaveUndo;
+    if not SelectSpeedButton.Down then
+      undoManager.SaveUndo;
 
     backscreen.AssignTo(maptexture);
 
@@ -914,6 +942,13 @@ begin
 
     if RotateRightSpeedButton.Down or RotateLeftSpeedButton.Down then
       ZeroMemory(@anglerotated, SizeOf(anglerotated));
+
+    ClearSelection;
+    if SelectSpeedButton.Down then
+    begin
+      selRect.Left := lmousedownx;
+      selRect.Top := lmousedowny;
+    end;
 
     LLeftMousePaintTo(lmousemovex, lmousemovey);
   end
@@ -981,7 +1016,51 @@ begin
       drawbuffer.Canvas.LineTo(drawbuffer.Width, y * steph - 1);
     end;
   end;
+end;
 
+procedure TForm1.DrawSelection;
+var
+  sleft, stop, sright, sbottom: integer;
+  stepw, steph: integer;
+begin
+  if not HasSelection then
+    Exit;
+
+  sleft := MinI(selRect.Left, selRect.Right);
+  sright := MaxI(selRect.Left, selRect.Right);
+  stop := MinI(selRect.Top, selRect.Bottom);
+  sbottom := MaxI(selRect.Top, selRect.Bottom);
+
+  stepw := drawbuffer.Width div SCREENSIZEX;
+  steph := drawbuffer.Height div SCREENSIZEY;
+
+  sleft := sleft * stepw;
+  sright := (sright + 1) * stepw;
+  stop := stop * steph;
+  sbottom := (sbottom + 1) * steph;
+
+  drawbuffer.Canvas.Pen.Style := psDash;
+  drawbuffer.Canvas.Pen.Color := RGB(0, 0, 0);
+
+  drawbuffer.Canvas.MoveTo(sleft, stop);
+  drawbuffer.Canvas.LineTo(sright, stop);
+  drawbuffer.Canvas.LineTo(sright, sbottom);
+  drawbuffer.Canvas.LineTo(sleft, sbottom);
+  drawbuffer.Canvas.LineTo(sleft, stop);
+end;
+
+procedure TForm1.NormalizeSelectionRect;
+var
+  sleft, stop, sright, sbottom: integer;
+begin
+  sleft := MinI(selRect.Left, selRect.Right);
+  sright := MaxI(selRect.Left, selRect.Right);
+  stop := MinI(selRect.Top, selRect.Bottom);
+  sbottom := MaxI(selRect.Top, selRect.Bottom);
+  selRect.Left := sleft;
+  selRect.Right := sright;
+  selRect.Top := stop;
+  selRect.Bottom := sbottom;
 end;
 
 function TForm1.ZoomValueX(const X: Integer): Integer;
@@ -1007,6 +1086,7 @@ begin
 
   drawbuffer.Canvas.StretchDraw(Rect(0, 0, drawbuffer.Width, drawbuffer.Height), buffer);
   DrawGrid;
+  DrawSelection;
 end;
 
 procedure TForm1.CreateExportBuffer;
@@ -1035,6 +1115,7 @@ end;
 procedure TForm1.DoPrepareEditor;
 begin
   undoManager.Clear;
+  ClearSelection;
   changed := False;
 end;
 
@@ -1545,6 +1626,30 @@ procedure TForm1.RotateSpeedButton270Click(Sender: TObject);
 begin
   curangle := 3;
   HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap3, '270', bktile);
+end;
+
+procedure TForm1.ClearSelection;
+begin
+  selRect.Left := -1;
+  selRect.Top := -1;
+  selRect.Right := -1;
+  selRect.Bottom := -1;
+end;
+
+function TForm1.HasSelection: boolean;
+begin
+  Result :=
+    IsIntInRange(selRect.Left, 0, SCREENSIZEX - 1) and
+    IsIntInRange(selRect.Right, 0, SCREENSIZEX - 1) and
+    IsIntInRange(selRect.Top, 0, SCREENSIZEY - 1) and
+    IsIntInRange(selRect.bottom, 0, SCREENSIZEY - 1);
+end;
+
+procedure TForm1.SelectSpeedButtonClick(Sender: TObject);
+begin
+  lmouserecalcdown := False;
+  lmousetraceposition := False;
+  lmouseclearonmove := True;
 end;
 
 end.
