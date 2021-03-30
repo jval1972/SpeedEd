@@ -3802,6 +3802,10 @@ object Form1: TForm1
         ShortCut = 16453
         OnClick = Export1Click
       end
+      object ExportWAD1: TMenuItem
+        Caption = 'Export WAD'
+        OnClick = ExportWAD1Click
+      end
       object N1: TMenuItem
         Caption = '-'
       end
@@ -3966,6 +3970,13 @@ object Form1: TForm1
       '*.jpg|JPEG Image File (*.jpeg)|*.jpeg|Bitmaps (*.bmp)|*.bmp'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Left = 544
+    Top = 112
+  end
+  object SaveWADDialog: TSaveDialog
+    DefaultExt = 'wad'
+    Filter = 'WAD Files (*.wad)|*.wad|All Files (*.*)|*.*'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Left = 584
     Top = 112
   end
 end

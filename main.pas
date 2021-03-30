@@ -129,6 +129,8 @@ type
     PasteIntoSelection1: TMenuItem;
     PasteIntoSelection2: TMenuItem;
     PasteHere1: TMenuItem;
+    ExportWAD1: TMenuItem;
+    SaveWADDialog: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -190,6 +192,7 @@ type
     procedure SelectSpeedButtonClick(Sender: TObject);
     procedure PasteIntoSelection1Click(Sender: TObject);
     procedure PasteHere1Click(Sender: TObject);
+    procedure ExportWAD1Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -264,6 +267,7 @@ type
     procedure ClearSelection;
     function HasSelection: boolean;
     procedure CopyToClipboardAsText;
+    procedure DoExportWAD(const fn: string);
   public
     { Public declarations }
   end;
@@ -276,7 +280,7 @@ implementation
 {$R *.dfm}
 
 uses
-  se_utils, se_defs;
+  se_utils, se_defs, se_doommap, se_wadreader, se_wadwriter;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
@@ -1712,6 +1716,48 @@ begin
     needbuffersupdate := True;
     Changed := True;
   end;
+end;
+
+procedure TForm1.DoExportWAD(const fn: string);
+var
+  ms: TMemoryStream;
+  wadr: TWadReader;
+  wadw: TWadWriter;
+  i: integer;
+  buf8192: bmbuffer8192_p;
+begin
+  ms := TMemoryStream.Create;
+  ms.Write(DOOMMAP, SizeOf(DOOMMAP));
+  ms.Position := 0;
+
+  wadr := TWadReader.Create;
+  wadr.LoadFromStream(ms);
+
+  wadw := TWadWriter.Create;
+
+  for i := 0 to wadr.NumEntries - 1 do
+    wadw.AddString(wadr.EntryName(i), wadr.EntryAsString(i));
+
+  GetMem(buf8192, SizeOf(bmbuffer8192_t));
+
+  maptexture.GetBuffer8192(buf8192);
+  wadw.AddSeparator('F_START');
+  wadw.AddData('E2M1FLAT', buf8192, SizeOf(bmbuffer8192_t));
+  wadw.AddSeparator('F_END');
+  wadw.SaveToFile(fn);
+
+  wadw.Free;
+  wadr.Free;
+
+  ms.Free;
+
+  FreeMem(buf8192);
+end;
+
+procedure TForm1.ExportWAD1Click(Sender: TObject);
+begin
+  if SaveWADDialog.Execute then
+    DoExportWAD(SaveWADDialog.FileName);
 end;
 
 end.
