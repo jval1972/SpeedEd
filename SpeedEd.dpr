@@ -47,7 +47,10 @@ uses
   se_maptexture in 'se_maptexture.pas',
   se_grafs in 'se_grafs.pas',
   se_scriptengine in 'se_scriptengine.pas',
-  se_doommap in 'se_doommap.pas';
+  se_doommap in 'se_doommap.pas',
+  se_wad in 'se_wad.pas',
+  se_wadreader in 'se_wadreader.pas',
+  se_wadwriter in 'se_wadwriter.pas';
 
 {$R *.res}
 
