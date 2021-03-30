@@ -46,7 +46,8 @@ uses
   se_defs in 'se_defs.pas',
   se_maptexture in 'se_maptexture.pas',
   se_grafs in 'se_grafs.pas',
-  se_scriptengine in 'se_scriptengine.pas';
+  se_scriptengine in 'se_scriptengine.pas',
+  se_doommap in 'se_doommap.pas';
 
 {$R *.res}
 
