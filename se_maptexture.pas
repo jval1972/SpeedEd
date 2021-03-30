@@ -47,6 +47,14 @@ type
   end;
   Pmaptexture_t = ^maptexture_t;
 
+
+type
+  buffer_t = packed array[0..4095] of byte;
+  bmbuffer4096_t = packed array[0..4095] of buffer_t;
+  bmbuffer4096_p = ^bmbuffer4096_t;
+  bmbuffer8192_t = packed array[0..8191] of packed array[0..8191] of byte;
+  bmbuffer8192_p = ^bmbuffer8192_t;
+
 type
   TMapTexture = class(TObject)
   private
@@ -68,6 +76,8 @@ type
     procedure ApplyImportText(const tx: string; const aX1: integer = -1; const aX2: integer = -1;
       const aY1: integer = -1; const aY2: integer = -1);
     procedure GetBitmap(const b: TBitmap; const doublesize: boolean);
+    procedure GetBuffer4096(const buf4096: bmbuffer4096_p);
+    procedure GetBuffer8192(const buf8192: bmbuffer8192_p);
     procedure AssignTo(const amaptexture: TMapTexture);
     property MapTiles[x, y: integer]: integer read GetMapTile write SetMapTile;
     property Angles[x, y: integer]: integer read GetAngle write SetAngle;
@@ -277,12 +287,6 @@ var
   end;
 
   procedure GenerateMapBitmap;
-  type
-    buffer_t = packed array[0..4095] of byte;
-    bmbuffer4096_t = packed array[0..4095] of buffer_t;
-    bmbuffer4096_p = ^bmbuffer4096_t;
-    bmbuffer8192_t = packed array[0..8191] of packed array[0..8191] of byte;
-    bmbuffer8192_p = ^bmbuffer8192_t;
   var
     xb, yb: integer;
     ix, iy: integer;
@@ -391,6 +395,207 @@ begin
     RGBpal[i] := RGB(pal[3 * i + 2] * 4, pal[3 * i + 1] * 4 + 2, pal[3 * i] * 4 + 2);
 
   GenerateMapBitmap;
+end;
+
+procedure TMapTexture.GetBuffer4096(const buf4096: bmbuffer4096_p);
+var
+  grafs: PByteArray;
+  grafsize: integer;
+  pal: PByteArray;
+  i: integer;
+  RGBpal: array[0..255] of LongWord;
+
+  procedure _rotate_tile(const pt: PByteArray; const rot: integer);
+  var
+    buf: packed array[0..SCREENSIZE - 1] of byte;
+    ii, jj: integer;
+  begin
+    if rot = 0 then
+      exit;
+
+    for ii := 0 to 4095 do
+      buf[ii] := pt[ii];
+
+    if rot = 1 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[(63 - jj) * 64 + ii];
+    if rot = 2 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[(63 - ii) * 64 + 63 - jj];
+    if rot = 3 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[jj * 64 + 63 - ii];
+  end;
+
+  procedure GenerateBuf4096;
+  var
+    xb, yb: integer;
+    ix, iy: integer;
+    ig: integer;
+    g, m: integer;
+    tile: packed array[0..4095] of byte;
+    it: integer;
+    bmbuffer4096: bmbuffer4096_p;
+    bb: byte;
+  begin
+    bmbuffer4096 := buf4096;
+    for m := 0 to 4095 do
+    begin
+      xb := (m div 64) * 64;
+      yb := (m mod 64) * 64;
+      g := data.maptiles[m];
+      ig := g * 64 * 64;
+      if (ig >= 0) and (ig < grafsize - 4095) then
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := grafs[ig + ix];
+      end
+      else
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := 0;
+      end;
+
+      _rotate_tile(@tile, data.angles[m]);
+
+      it := 0;
+      for iy := yb to yb + 63 do
+        for ix := xb to xb + 63 do
+        begin
+          bmbuffer4096[ix, iy] := tile[it];
+          inc(it);
+        end;
+    end;
+
+    for iy := 0 to 2047 do
+      for ix := 0 to 4095 do
+      begin
+        bb := bmbuffer4096[ix, iy];
+        bmbuffer4096[ix, iy] := bmbuffer4096[ix, 4095 - iy];
+        bmbuffer4096[ix, 4095 - iy] := bb;
+      end;
+  end;
+
+begin
+  grafs := @GRAFS_DAT;
+  grafsize := SizeOf(GRAFS_DAT);
+  pal := @GRAFS_PAL;
+
+  for i := 0 to 255 do
+    RGBpal[i] := RGB(pal[3 * i + 2] * 4, pal[3 * i + 1] * 4 + 2, pal[3 * i] * 4 + 2);
+
+  GenerateBuf4096;
+end;
+
+procedure TMapTexture.GetBuffer8192(const buf8192: bmbuffer8192_p);
+var
+  grafs: PByteArray;
+  grafsize: integer;
+  pal: PByteArray;
+  i: integer;
+  RGBpal: array[0..255] of LongWord;
+
+  procedure _rotate_tile(const pt: PByteArray; const rot: integer);
+  var
+    buf: packed array[0..SCREENSIZE - 1] of byte;
+    ii, jj: integer;
+  begin
+    if rot = 0 then
+      exit;
+
+    for ii := 0 to 4095 do
+      buf[ii] := pt[ii];
+
+    if rot = 1 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[(63 - jj) * 64 + ii];
+    if rot = 2 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[(63 - ii) * 64 + 63 - jj];
+    if rot = 3 then
+      for ii := 0 to 63 do
+        for jj :=  0 to 63 do
+          pt[ii * 64 + jj] := buf[jj * 64 + 63 - ii];
+  end;
+
+  procedure GenerateBuf8192;
+  var
+    xb, yb: integer;
+    ix, iy: integer;
+    ig: integer;
+    g, m: integer;
+    tile: packed array[0..4095] of byte;
+    it: integer;
+    bmbuffer4096: bmbuffer4096_p;
+    bmbuffer8192: bmbuffer8192_p;
+    bb: byte;
+  begin
+    GetMem(bmbuffer4096, SizeOf(bmbuffer4096_t));
+    for m := 0 to 4095 do
+    begin
+      xb := (m div 64) * 64;
+      yb := (m mod 64) * 64;
+      g := data.maptiles[m];
+      ig := g * 64 * 64;
+      if (ig >= 0) and (ig < grafsize - 4095) then
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := grafs[ig + ix];
+      end
+      else
+      begin
+        for ix := 0 to 4095 do
+          tile[ix] := 0;
+      end;
+
+      _rotate_tile(@tile, data.angles[m]);
+
+      it := 0;
+      for iy := yb to yb + 63 do
+        for ix := xb to xb + 63 do
+        begin
+          bmbuffer4096[ix, iy] := tile[it];
+          inc(it);
+        end;
+    end;
+
+    for iy := 0 to 2047 do
+      for ix := 0 to 4095 do
+      begin
+        bb := bmbuffer4096[ix, iy];
+        bmbuffer4096[ix, iy] := bmbuffer4096[ix, 4095 - iy];
+        bmbuffer4096[ix, 4095 - iy] := bb;
+      end;
+
+    bmbuffer8192 := buf8192;
+    for iy := 0 to 4095 do
+      for ix := 0 to 4095 do
+      begin
+        bb := bmbuffer4096[ix, iy];
+        bmbuffer8192[2 * ix, 2 * iy] := bb;
+        bmbuffer8192[2 * ix + 1, 2 * iy] := bb;
+        bmbuffer8192[2 * ix + 1, 2 * iy + 1] := bb;
+        bmbuffer8192[2 * ix, 2 * iy + 1] := bb;
+      end;
+
+
+    FreeMem(bmbuffer4096);
+  end;
+
+begin
+  grafs := @GRAFS_DAT;
+  grafsize := SizeOf(GRAFS_DAT);
+  pal := @GRAFS_PAL;
+
+  for i := 0 to 255 do
+    RGBpal[i] := RGB(pal[3 * i + 2] * 4, pal[3 * i + 1] * 4 + 2, pal[3 * i] * 4 + 2);
+
+  GenerateBuf8192;
 end;
 
 procedure TMapTexture.AssignTo(const amaptexture: TMapTexture);
