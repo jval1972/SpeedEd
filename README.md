@@ -1,4 +1,3 @@
 # SpeedEd
 
-GLSpeed Editor Utilities
-
+GLSpeed Tile Editor

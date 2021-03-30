@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 19
   Width = 958
   Height = 754
-  Caption = 'GLSpeed map Editor utilities'
+  Caption = 'GLSpeed Tile Editor'
   Color = clBtnFace
   Constraints.MinHeight = 680
   Constraints.MinWidth = 800

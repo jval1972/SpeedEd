@@ -56,7 +56,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'GLSpeed map Editor utilities';
+  Application.Title := 'GLSpeed Tile Editor';
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.

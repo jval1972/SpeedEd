@@ -527,7 +527,7 @@ begin
 end;
 
 resourcestring
-  rsTitle = 'GLSpeed map Editor utilities';
+  rsTitle = 'GLSpeed Tile Editor';
 
 procedure TForm1.About1Click(Sender: TObject);
 begin
