@@ -103,7 +103,7 @@ type
     RectSpeedButton: TSpeedButton;
     FillRectSpeedButton: TSpeedButton;
     LineSpeedButton: TSpeedButton;
-    EraseTextSpeedButton: TSpeedButton;
+    EraseSpeedButton: TSpeedButton;
     EclipseSpeedButton: TSpeedButton;
     FilledEclipseSpeedButton: TSpeedButton;
     PaintBoxPopupMenu1: TPopupMenu;
@@ -115,6 +115,8 @@ type
     Export1: TMenuItem;
     N6: TMenuItem;
     SavePictureDialog1: TSavePictureDialog;
+    RotateRightSpeedButton: TSpeedButton;
+    RotateLeftSpeedButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -147,7 +149,7 @@ type
     procedure BackgroundPalette1MouseDown(Sender: TObject;
       Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure FreeDrawSpeedButtonClick(Sender: TObject);
-    procedure EraseTextSpeedButtonClick(Sender: TObject);
+    procedure EraseSpeedButtonClick(Sender: TObject);
     procedure FloodFillSpeedButtonClick(Sender: TObject);
     procedure RectSpeedButtonClick(Sender: TObject);
     procedure FillRectSpeedButtonClick(Sender: TObject);
@@ -164,6 +166,8 @@ type
     procedure Cut1Click(Sender: TObject);
     procedure PaintBoxPopupMenu1Popup(Sender: TObject);
     procedure Export1Click(Sender: TObject);
+    procedure RotateRightSpeedButtonClick(Sender: TObject);
+    procedure RotateLeftSpeedButtonClick(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -186,6 +190,7 @@ type
     bktile: LongWord;
     bkpalbitmap: TBitmap;
     closing: boolean;
+    anglerotated: array[0..SCREENSIZEX - 1, 0..SCREENSIZEY - 1] of boolean;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
@@ -220,6 +225,8 @@ type
     procedure midpointellipse(const X, Y: integer; const filled: boolean);
     procedure EditActionEclipse(const X, Y: integer);
     procedure EditActionFillEclipse(const X, Y: integer);
+    procedure EditActionRotateRight(const X, Y: integer);
+    procedure EditActionRotateLeft(const X, Y: integer);
     procedure DoExportImage(const imgfname: string);
   public
     { Public declarations }
@@ -634,6 +641,50 @@ begin
   midpointellipse(X, Y, True);
 end;
 
+procedure TForm1.EditActionRotateRight(const X, Y: integer);
+var
+  ang: integer;
+begin
+  if not IsIntInRange(X, 0, SCREENSIZEX - 1) then
+    Exit;
+  if not IsIntInRange(Y, 0, SCREENSIZEY - 1) then
+    Exit;
+
+  if anglerotated[X, Y] then
+    Exit;
+
+  anglerotated[X, Y] := True;
+
+  ang := maptexture.Angles[X, Y];
+  if ang = 3 then
+    ang := 0
+  else
+    inc(ang);
+  maptexture.Angles[X, Y] := ang;
+end;
+
+procedure TForm1.EditActionRotateLeft(const X, Y: integer);
+var
+  ang: integer;
+begin
+  if not IsIntInRange(X, 0, SCREENSIZEX - 1) then
+    Exit;
+  if not IsIntInRange(Y, 0, SCREENSIZEY - 1) then
+    Exit;
+
+  if anglerotated[X, Y] then
+    Exit;
+
+  anglerotated[X, Y] := True;
+
+  ang := maptexture.Angles[X, Y];
+  if ang = 0 then
+    ang := 3
+  else
+    dec(ang);
+  maptexture.Angles[X, Y] := ang;
+end;
+
 procedure TForm1.LLeftMousePaintAt(const X, Y: integer);
 begin
   if not lmousedown then
@@ -642,7 +693,7 @@ begin
     EditActionFreeDraw(X, Y)
   else if FloodFillSpeedButton.Down then
     EditActionFloodFill(X, Y)
-  else if EraseTextSpeedButton.Down then
+  else if EraseSpeedButton.Down then
     EditActionErase(X, Y)
   else if RectSpeedButton.Down then
     EditActionRect(X, Y)
@@ -653,7 +704,11 @@ begin
   else if EclipseSpeedButton.Down then
     EditActionEclipse(X, Y)
   else if FilledEclipseSpeedButton.Down then
-    EditActionFillEclipse(X, Y);
+    EditActionFillEclipse(X, Y)
+  else if RotateRightSpeedButton.Down then
+    EditActionRotateRight(X, Y)
+  else if RotateLeftSpeedButton.Down then
+    EditActionRotateLeft(X, Y);
 end;
 
 procedure TForm1.LLeftMousePaintTo(const X, Y: integer);
@@ -745,6 +800,9 @@ begin
     lmousedowny := ZoomValueY(Y);
     lmousemovex := ZoomValueX(X);
     lmousemovey := ZoomValueY(Y);
+
+    if RotateRightSpeedButton.Down or RotateLeftSpeedButton.Down then
+      ZeroMemory(@anglerotated, SizeOf(anglerotated));
 
     LLeftMousePaintTo(lmousemovex, lmousemovey);
   end;
@@ -1141,7 +1199,7 @@ begin
   lmouseclearonmove := False;
 end;
 
-procedure TForm1.EraseTextSpeedButtonClick(Sender: TObject);
+procedure TForm1.EraseSpeedButtonClick(Sender: TObject);
 begin
   lmouserecalcdown := True;
   lmousetraceposition := True;
@@ -1299,6 +1357,20 @@ begin
   end
   else
     exportbuffer.SaveToFile(imgfname);
+end;
+
+procedure TForm1.RotateRightSpeedButtonClick(Sender: TObject);
+begin
+  lmouserecalcdown := True;
+  lmousetraceposition := True;
+  lmouseclearonmove := False;
+end;
+
+procedure TForm1.RotateLeftSpeedButtonClick(Sender: TObject);
+begin
+  lmouserecalcdown := True;
+  lmousetraceposition := True;
+  lmouseclearonmove := False;
 end;
 
 end.
