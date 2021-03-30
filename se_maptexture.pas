@@ -144,6 +144,8 @@ var
   grafs: PByteArray;
   grafsize: integer;
   pal: PByteArray;
+  i: integer;
+  RGBpal: array[0..255] of LongWord;
 
   procedure _rotate_tile(const pt: PByteArray; const rot: integer);
   var
@@ -172,9 +174,10 @@ var
 
   procedure GenerateMapBitmap;
   type
-    bmbuffer4096_t = packed array[0..4095, 0..4095] of byte;
+    buffer_t = packed array[0..4095] of byte;
+    bmbuffer4096_t = packed array[0..4095] of buffer_t;
     bmbuffer4096_p = ^bmbuffer4096_t;
-    bmbuffer8192_t = packed array[0..8191, 0..8191] of byte;
+    bmbuffer8192_t = packed array[0..8191] of packed array[0..8191] of byte;
     bmbuffer8192_p = ^bmbuffer8192_t;
   var
     xb, yb: integer;
@@ -182,6 +185,7 @@ var
     ig: integer;
     g, m: integer;
     tile: packed array[0..4095] of byte;
+    tmpbuf: buffer_t;
     it: integer;
     bmbuffer4096: bmbuffer4096_p;
     bmbuffer8192: bmbuffer8192_p;
@@ -213,17 +217,25 @@ var
       for iy := yb to yb + 63 do
         for ix := xb to xb + 63 do
         begin
-          bmbuffer4096[ix, iy] := tile[it];
+//          bmbuffer4096[ix, iy] := tile[it];
+          bmbuffer4096[iy, ix] := tile[it];
           inc(it);
         end;
     end;
 
-    for iy := 0 to 2047 do
+{    for iy := 0 to 2047 do
       for ix := 0 to 4095 do
       begin
         bb := bmbuffer4096[ix, iy];
         bmbuffer4096[ix, iy] := bmbuffer4096[ix, 4095 - iy];
         bmbuffer4096[ix, 4095 - iy] := bb;
+      end;}
+    for iy := 0 to 2047 do
+//      for ix := 0 to 4095 do
+      begin
+        tmpbuf := bmbuffer4096[iy];
+        bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
+        bmbuffer4096[4095 - iy] := tmpbuf;
       end;
 
     if doublesize then
@@ -247,8 +259,8 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to 8191 do
         begin
-          bb := bmbuffer8192[ix, iy];
-          c := RGB(pal[3 * bb + 2] * 4, pal[3 * bb + 1] * 4 + 2, pal[3 * bb] * 4 + 2);
+          bb := bmbuffer8192[iy, ix];
+          c := RGBpal[bb];
           ln[ix] := c;
         end;
       end;
@@ -265,8 +277,8 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to 4095 do
         begin
-          bb := bmbuffer4096[iy, ix];
-          c := RGB(pal[3 * bb + 2] * 4, pal[3 * bb + 1] * 4 + 2, pal[3 * bb] * 4 + 2);
+          bb := bmbuffer4096[ix, iy];
+          c := RGBpal[bb];
           ln[ix] := c;
         end;
       end;
@@ -279,6 +291,9 @@ begin
   grafs := @GRAFS_DAT;
   grafsize := SizeOf(GRAFS_DAT);
   pal := @GRAFS_PAL;
+
+  for i := 0 to 255 do
+    RGBpal[i] := RGB(pal[3 * i + 2] * 4, pal[3 * i + 1] * 4 + 2, pal[3 * i] * 4 + 2);
 
   GenerateMapBitmap;
 end;
