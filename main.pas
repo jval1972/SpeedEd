@@ -43,8 +43,7 @@ const
   MOUSEWHEELTIMEOUT = 100; // Msecs until next mouse wheel even to be proccessed
 
 const
-  COLORPICKPALETTESIZE = 24;
-  CHARACTERPICKPALETTESIZE = 16;
+  COLORPICKTILESIZE = 32;
 
 type
   TForm1 = class(TForm)
@@ -244,8 +243,10 @@ uses
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
-  i: integer;
+  i, j: integer;
   doCreate: boolean;
+  tmpmap: TMapTexture;
+  tile: integer;
 begin
   DoubleBuffered := True;
   for i := 0 to ComponentCount - 1 do
@@ -320,7 +321,27 @@ begin
   zoom := GetIntInRange(opt_zoom, MINZOOM, MAXZOOM);
 
   bkpalbitmap := TBitmap.Create;
-  bkpalbitmap.Assign(BackgroundPalette1.Picture.Bitmap);
+
+  tmpmap := TMapTexture.Create;
+
+  tile := 0;
+  for j := 0 to 15 do
+    for i := 0 to 15 do
+    begin
+      tmpmap.MapTiles[i, j] := tile;
+      inc(tile);
+    end;
+
+  bkpalbitmap.Width := 2048;
+  bkpalbitmap.Height := 2048;
+
+  tmpmap.GetBitmap(buffer, False);
+  bkpalbitmap.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap.Width - 1, bkpalbitmap.Height - 1), buffer);
+  bkpalbitmap.Width := 512;
+  bkpalbitmap.Height := 512;
+
+  tmpmap.Free;
+
   HandlePaletteImage(BackgroundPalette1.Width - 1, BackgroundPalette1.Height - 1, BackgroundPalette1, bkpalbitmap, 'BK', bktile);
 
   doCreate := True;
@@ -1134,17 +1155,6 @@ begin
   InvalidatePaintBox;
 end;
 
-function constrastcolor(const cc: LongWord): LongWord;
-var
-  l: double;
-begin
-  l := GetRValue(cc) * 0.299 + GetGValue(cc) * 0.587 + GetBValue(cc) * 0.114;
-  if l < 128 then
-    Result := RGB(255, 255, 255)
-  else
-    Result := RGB(0, 0, 0);
-end;
-
 procedure TForm1.HandlePaletteImage(const X, Y: integer; const Palette1: TImage;
   const palbitmap: TBitmap; const tx: string; var cc: LongWord);
 var
@@ -1161,26 +1171,29 @@ begin
   if not IsIntInRange(Y, 0, Palette1.Height - 1) then
     Exit;
 
-  cc := (X div 16) + (Y div 16) * 4;
+  cc := (X div 32) + (Y div 32) * 16;
+
+  Palette1.Picture.Bitmap.Width := 512;
+  Palette1.Picture.Bitmap.Height := 512;
 
   C := Palette1.Picture.Bitmap.Canvas;
   C.Draw(0, 0, palbitmap);
-  px := X div COLORPICKPALETTESIZE;
-  py := Y div COLORPICKPALETTESIZE;
+  px := X div COLORPICKTILESIZE;
+  py := Y div COLORPICKTILESIZE;
   C.Pen.Style := psSolid;
-  txcolor := constrastcolor(cc);
+  txcolor := RGB(255, 255, 255);
   C.Pen.Color := txcolor;
-  C.MoveTo(px * COLORPICKPALETTESIZE, py * COLORPICKPALETTESIZE);
-  C.LineTo((1 + px) * COLORPICKPALETTESIZE - 1, py * COLORPICKPALETTESIZE);
-  C.LineTo((1 + px) * COLORPICKPALETTESIZE - 1, (1 + py) * COLORPICKPALETTESIZE - 1);
-  C.LineTo(px * COLORPICKPALETTESIZE, (1 + py) * COLORPICKPALETTESIZE - 1);
-  C.LineTo(px * COLORPICKPALETTESIZE, py * COLORPICKPALETTESIZE);
+  C.MoveTo(px * COLORPICKTILESIZE, py * COLORPICKTILESIZE);
+  C.LineTo((1 + px) * COLORPICKTILESIZE - 1, py * COLORPICKTILESIZE);
+  C.LineTo((1 + px) * COLORPICKTILESIZE - 1, (1 + py) * COLORPICKTILESIZE - 1);
+  C.LineTo(px * COLORPICKTILESIZE, (1 + py) * COLORPICKTILESIZE - 1);
+  C.LineTo(px * COLORPICKTILESIZE, py * COLORPICKTILESIZE);
   C.Font.Size := 10;
   C.Font.Color := txcolor;
   C.Brush.Style := bsClear;
   C.TextOut(
-    px * COLORPICKPALETTESIZE + COLORPICKPALETTESIZE div 2 - C.TextWidth(tx) div 2,
-    py * COLORPICKPALETTESIZE + COLORPICKPALETTESIZE div 2 - C.TextHeight(tx) div 2,
+    px * COLORPICKTILESIZE + COLORPICKTILESIZE div 2 - C.TextWidth(tx) div 2,
+    py * COLORPICKTILESIZE + COLORPICKTILESIZE div 2 - C.TextHeight(tx) div 2,
     tx
   );
   Palette1.Invalidate;
@@ -1308,6 +1321,8 @@ begin
   for x := 0 to SCREENSIZEX - 1 do
     for y := 0 to SCREENSIZEY - 1 do
       maptexture.MapTiles[x, y] := 0;
+  needsupdate := True;
+  needbuffersupdate := True;
 end;
 
 procedure TForm1.PaintBoxPopupMenu1Popup(Sender: TObject);

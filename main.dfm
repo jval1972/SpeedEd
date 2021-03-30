@@ -1,8 +1,8 @@
 object Form1: TForm1
   Left = 85
-  Top = 53
+  Top = 19
   Width = 957
-  Height = 720
+  Height = 754
   Caption = 'GLSpeed map Editor utilities'
   Color = clBtnFace
   Constraints.MinHeight = 680
@@ -2112,7 +2112,7 @@ object Form1: TForm1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 642
+    Top = 676
     Width = 941
     Height = 19
     Panels = <
@@ -2123,8 +2123,8 @@ object Form1: TForm1
   object LeftPanel: TPanel
     Left = 0
     Top = 62
-    Width = 265
-    Height = 580
+    Width = 553
+    Height = 614
     Align = alLeft
     BorderWidth = 4
     Caption = ' '
@@ -2133,8 +2133,8 @@ object Form1: TForm1
     object ToolPanel: TPanel
       Left = 5
       Top = 5
-      Width = 255
-      Height = 570
+      Width = 543
+      Height = 604
       Align = alClient
       Caption = ' '
       TabOrder = 0
@@ -2646,16 +2646,16 @@ object Form1: TForm1
       object BackgroundPalettePanel1: TPanel
         Left = 8
         Top = 48
-        Width = 104
-        Height = 80
+        Width = 520
+        Height = 544
         Caption = ' '
         Color = clGray
         TabOrder = 0
         object BackgroundPalette1: TImage
           Left = 4
           Top = 28
-          Width = 96
-          Height = 48
+          Width = 512
+          Height = 512
           Cursor = crHandPoint
           Picture.Data = {
             07544269746D617036360000424D363600000000000036000000280000006000
@@ -3098,7 +3098,7 @@ object Form1: TForm1
         object Panel5: TPanel
           Left = 1
           Top = 1
-          Width = 102
+          Width = 518
           Height = 24
           Align = alTop
           BevelOuter = bvNone
@@ -3109,10 +3109,10 @@ object Form1: TForm1
     end
   end
   object Panel4: TPanel
-    Left = 265
+    Left = 553
     Top = 62
-    Width = 676
-    Height = 580
+    Width = 388
+    Height = 614
     Align = alClient
     BevelOuter = bvNone
     Caption = ' '
@@ -3120,8 +3120,8 @@ object Form1: TForm1
     object ScrollBox1: TScrollBox
       Left = 0
       Top = 0
-      Width = 676
-      Height = 580
+      Width = 388
+      Height = 614
       Align = alClient
       BevelEdges = []
       BevelInner = bvNone
