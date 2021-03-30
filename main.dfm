@@ -3567,6 +3567,11 @@ object Form1: TForm1
         ShortCut = 16470
         OnClick = Paste1Click
       end
+      object PasteIntoSelection1: TMenuItem
+        Caption = 'Paste Into Selection'
+        Hint = 'Paste from clipboard into selection'
+        OnClick = PasteIntoSelection1Click
+      end
       object N2: TMenuItem
         Caption = '-'
       end
@@ -3630,6 +3635,16 @@ object Form1: TForm1
     end
     object Paste2: TMenuItem
       Caption = 'Paste'
+    end
+    object PasteIntoSelection2: TMenuItem
+      Caption = 'Paste Into Selection'
+      Hint = 'Paste from clipboard into selection'
+      OnClick = PasteIntoSelection1Click
+    end
+    object PasteHere1: TMenuItem
+      Caption = 'Paste Here'
+      Hint = 'Paste from clipboard here'
+      OnClick = PasteHere1Click
     end
   end
   object SavePictureDialog1: TSavePictureDialog

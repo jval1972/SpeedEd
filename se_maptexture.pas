@@ -63,8 +63,10 @@ type
     procedure Clear;
     procedure SaveToStream(const strm: TStream);
     procedure LoadFromStream(const strm: TStream);
-    function GetExportText(const x: integer = -1; const y: integer = -1): string;
-    procedure ApplyImportText(const tx: string);
+    function GetExportText(const aX1: integer = -1; const aX2: integer = -1;
+      const aY1: integer = -1; const aY2: integer = -1): string;
+    procedure ApplyImportText(const tx: string; const aX1: integer = -1; const aX2: integer = -1;
+      const aY1: integer = -1; const aY2: integer = -1);
     procedure GetBitmap(const b: TBitmap; const doublesize: boolean);
     procedure AssignTo(const amaptexture: TMapTexture);
     property MapTiles[x, y: integer]: integer read GetMapTile write SetMapTile;
@@ -141,8 +143,10 @@ begin
   strm.Read(data^, SizeOf(maptexture_t));
 end;
 
-function TMapTexture.GetExportText(const x: integer = -1; const y: integer = -1): string;
+function TMapTexture.GetExportText(const aX1: integer = -1; const aX2: integer = -1;
+  const aY1: integer = -1; const aY2: integer = -1): string;
 var
+  x, y, x2, y2: integer;
   iX, iY: integer;
 
   function _elem_str(const xx, yy: integer): string;
@@ -151,50 +155,90 @@ var
   end;
 
 begin
-  Result := '';
-
-  if (x = -1) and (y = -1) then
-  begin
-    for iX := 0 to SCREENSIZEX - 1 do
-      for iY := 0 to SCREENSIZEY - 1 do
-        Result := Result + _elem_str(iX, iY);
-    Exit;
-  end;
+  x := MinI(aX1, aX2);
+  x2 := MaxI(aX1, aX2);
+  y := MinI(aY1, aY2);
+  y2 := MaxI(aY1, aY2);
 
   if x = -1 then
-  begin
-    for iX := 0 to SCREENSIZEX - 1 do
-      Result := Result + _elem_str(iX, y);
-    Exit;
-  end;
-
+    x := 0;
+  if x2 = -1 then
+    x2 := SCREENSIZEX - 1;
   if y = -1 then
-  begin
-    for iY := 0 to SCREENSIZEY - 1 do
-      Result := Result + _elem_str(x, iY);
-    Exit;
-  end;
+    y := 0;
+  if y2 = -1 then
+    y2 := SCREENSIZEY - 1;
 
-  Result := _elem_str(x, y);
+  x := GetIntInRange(x, 0, SCREENSIZEX - 1);
+  x2 := GetIntInRange(x2, 0, SCREENSIZEX - 1);
+  y := GetIntInRange(y, 0, SCREENSIZEY - 1);
+  y2 := GetIntInRange(y2, 0, SCREENSIZEY - 1);
+
+  Result := '';
+
+  for iX := x to x2 do
+    for iY := y to y2 do
+      Result := Result + _elem_str(iX, iY);
 end;
 
-procedure TMapTexture.ApplyImportText(const tx: string);
+procedure TMapTexture.ApplyImportText(const tx: string; const aX1: integer = -1; const aX2: integer = -1;
+  const aY1: integer = -1; const aY2: integer = -1);
 var
   sc: TScriptEngine;
-  x, y, tile, ang: integer;
+  x, y, x2, y2: integer;
+  xx, yy, tile, ang: integer;
+  rx, ry: integer;
+  cnt: integer;
 begin
+  x := MinI(aX1, aX2);
+  x2 := MaxI(aX1, aX2);
+  y := MinI(aY1, aY2);
+  y2 := MaxI(aY1, aY2);
+
+  if x = -1 then
+    x := 0;
+  if x2 = -1 then
+    x2 := SCREENSIZEX - 1;
+  if y = -1 then
+    y := 0;
+  if y2 = -1 then
+    y2 := SCREENSIZEY - 1;
+
+  x := GetIntInRange(x, 0, SCREENSIZEX - 1);
+  x2 := GetIntInRange(x2, 0, SCREENSIZEX - 1);
+  y := GetIntInRange(y, 0, SCREENSIZEY - 1);
+  y2 := GetIntInRange(y2, 0, SCREENSIZEY - 1);
+
+  cnt := 0;
+  rX := 0;
+  rY := 0;
   sc := TScriptEngine.Create(tx);
   while sc.GetInteger do
   begin
-    x := sc._Integer;
+    xx := sc._Integer;
     sc.MustGetInteger;
-    y := sc._Integer;
+    yy := sc._Integer;
     sc.MustGetInteger;
+    if cnt = 0 then
+    begin
+      rX := xx;
+      rY := yy;
+      cnt := 1;
+    end;
     tile := sc._Integer;
     sc.MustGetInteger;
     ang := sc._Integer;
-    SetMapTile(x, y, tile);
-    SetAngle(x, y, ang);
+
+    if aX1 >= 0 then
+      xx := xx - rX + aX1;
+    if aY1 >= 0 then
+      yy := yy - rY + aY1;
+    if IsIntInRange(xx, x, x2) then
+      if IsIntInRange(yy, y, y2) then
+      begin
+        SetMapTile(xx, yy, tile);
+        SetAngle(xx, yy, ang);
+      end;
   end;
   sc.Free;
 end;

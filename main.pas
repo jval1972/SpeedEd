@@ -126,6 +126,9 @@ type
     RotateSpeedButton180: TSpeedButton;
     RotateSpeedButton270: TSpeedButton;
     SelectSpeedButton: TSpeedButton;
+    PasteIntoSelection1: TMenuItem;
+    PasteIntoSelection2: TMenuItem;
+    PasteHere1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -185,6 +188,8 @@ type
     procedure RotateSpeedButton180Click(Sender: TObject);
     procedure RotateSpeedButton270Click(Sender: TObject);
     procedure SelectSpeedButtonClick(Sender: TObject);
+    procedure PasteIntoSelection1Click(Sender: TObject);
+    procedure PasteHere1Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -203,8 +208,9 @@ type
     lmousetraceposition: boolean;
     lmouseclearonmove: boolean;
     lmousedownx, lmousedowny: integer;
-    rmousedownx, rmousedowny: integer;
     lmousemovex, lmousemovey: integer;
+    rmousedown: boolean;
+    rmousedownx, rmousedowny: integer;
     bktile: integer;
     bkpalbitmap0: TBitmap;
     bkpalbitmap1: TBitmap;
@@ -257,6 +263,7 @@ type
     procedure DoExportImage(const imgfname: string);
     procedure ClearSelection;
     function HasSelection: boolean;
+    procedure CopyToClipboardAsText;
   public
     { Public declarations }
   end;
@@ -292,10 +299,12 @@ begin
   lmouseclearonmove := False;
   lmousedownx := 0;
   lmousedowny := 0;
-  rmousedownx := 0;
-  rmousedowny := 0;
   lmousemovex := 0;
   lmousemovey := 0;
+
+  rmousedown := False;
+  rmousedownx := 0;
+  rmousedowny := 0;
 
   curangle := 0;
 
@@ -497,6 +506,10 @@ begin
   PasteSpeedButton1.Enabled := Clipboard.HasFormat(CF_TEXT);
   ZoomInSpeedButton1.Enabled := zoom < MAXZOOM;
   ZoomOutSpeedButton1.Enabled := zoom > MINZOOM;
+
+  PasteIntoSelection1.Enabled := HasSelection;
+  PasteIntoSelection2.Enabled := HasSelection;
+
   if needsupdate then
   begin
     InvalidatePaintBox;
@@ -528,7 +541,7 @@ end;
 
 procedure TForm1.Copy1Click(Sender: TObject);
 begin
-  try Clipboard.AsText := maptexture.GetExportText; except end;
+  CopyToClipboardAsText;
 end;
 
 procedure TForm1.Open1Click(Sender: TObject);
@@ -559,6 +572,7 @@ begin
   Undo1.Enabled := undoManager.CanUndo;
   Redo1.Enabled := undoManager.CanRedo;
   Paste1.Enabled := Clipboard.HasFormat(CF_TEXT);
+  PasteIntoSelection1.Enabled := HasSelection;
 end;
 
 procedure TForm1.EditActionFreeDraw(const X, Y: integer);
@@ -968,7 +982,9 @@ begin
     lmousemovey := ZoomValueY(Y);
     LLeftMousePaintTo(lmousemovex, lmousemovey);
     lmousedown := False;
-  end;
+  end
+  else if button = mbRight then
+    rmousedown := False;
 end;
 
 procedure TForm1.PaintBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -1500,7 +1516,7 @@ procedure TForm1.Cut1Click(Sender: TObject);
 var
   x, y: integer;
 begin
-  try Clipboard.AsText := maptexture.GetExportText; except end;
+  CopyToClipboardAsText;
   undoManager.SaveUndo;
   Changed := True;
   for x := 0 to SCREENSIZEX - 1 do
@@ -1518,6 +1534,7 @@ begin
   Undo2.Enabled := undoManager.CanUndo;
   Redo2.Enabled := undoManager.CanRedo;
   Paste2.Enabled := Clipboard.HasFormat(CF_TEXT);
+  PasteIntoSelection2.Enabled := HasSelection;
 end;
 
 procedure TForm1.Export1Click(Sender: TObject);
@@ -1587,15 +1604,17 @@ procedure TForm1.Paste1Click(Sender: TObject);
 begin
   if Clipboard.HasFormat(CF_TEXT) then
   begin
+    undoManager.SaveUndo;
     maptexture.ApplyImportText(Clipboard.AsText);
     needsupdate := True;
     needbuffersupdate := True;
+    Changed := True;
   end;
 end;
 
 procedure TForm1.Cut2Click(Sender: TObject);
 begin
-  try Clipboard.AsText := maptexture.GetExportText(rmousedownx, rmousedowny); except end;
+  CopyToClipboardAsText;
   undoManager.SaveUndo;
   Changed := True;
   maptexture.MapTiles[rmousedownx, rmousedowny] := 0;
@@ -1650,6 +1669,49 @@ begin
   lmouserecalcdown := False;
   lmousetraceposition := False;
   lmouseclearonmove := True;
+end;
+
+procedure TForm1.CopyToClipboardAsText;
+begin
+  if HasSelection then
+  begin
+    try Clipboard.AsText := maptexture.GetExportText(selRect.Left, selRect.Right, selRect.Top, selRect.Bottom); except end;
+  end
+  else
+  begin
+    if rmousedown then
+    begin
+      try Clipboard.AsText := maptexture.GetExportText(rmousedownx, rmousedownx, rmousedowny, rmousedowny); except end;
+    end
+    else
+    begin
+      try Clipboard.AsText := maptexture.GetExportText; except end;
+    end;
+  end;
+end;
+
+procedure TForm1.PasteIntoSelection1Click(Sender: TObject);
+begin
+  if Clipboard.HasFormat(CF_TEXT) and HasSelection then
+  begin
+    undoManager.SaveUndo;
+    maptexture.ApplyImportText(Clipboard.AsText, selRect.Left, selRect.Right, selRect.Top, selRect.Bottom);
+    needsupdate := True;
+    needbuffersupdate := True;
+    Changed := True;
+  end;
+end;
+
+procedure TForm1.PasteHere1Click(Sender: TObject);
+begin
+  if Clipboard.HasFormat(CF_TEXT) then
+  begin
+    undoManager.SaveUndo;
+    maptexture.ApplyImportText(Clipboard.AsText, rmousedownx, SCREENSIZEX - 1, rmousedowny, SCREENSIZEY - 1);
+    needsupdate := True;
+    needbuffersupdate := True;
+    Changed := True;
+  end;
 end;
 
 end.
