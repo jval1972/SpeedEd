@@ -321,26 +321,17 @@ var
       for iy := yb to yb + 63 do
         for ix := xb to xb + 63 do
         begin
-//          bmbuffer4096[ix, iy] := tile[it];
           bmbuffer4096[iy, ix] := tile[it];
           inc(it);
         end;
     end;
 
-{    for iy := 0 to 2047 do
-      for ix := 0 to 4095 do
-      begin
-        bb := bmbuffer4096[ix, iy];
-        bmbuffer4096[ix, iy] := bmbuffer4096[ix, 4095 - iy];
-        bmbuffer4096[ix, 4095 - iy] := bb;
-      end;}
     for iy := 0 to 2047 do
-//      for ix := 0 to 4095 do
-      begin
-        tmpbuf := bmbuffer4096[iy];
-        bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
-        bmbuffer4096[4095 - iy] := tmpbuf;
-      end;
+    begin
+      tmpbuf := bmbuffer4096[iy];
+      bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
+      bmbuffer4096[4095 - iy] := tmpbuf;
+    end;
 
     if doublesize then
     begin
@@ -363,7 +354,6 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to 8191 do
         begin
-          bb := bmbuffer8192[iy, ix];
           c := RGBpal[bb];
           ln[ix] := c;
         end;
