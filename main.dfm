@@ -2850,6 +2850,51 @@ object Form1: TForm1
           F0F0F0F0F0F0F0F0F0F0}
         OnClick = RotateLeftSpeedButtonClick
       end
+      object RotateSpeedButton0: TSpeedButton
+        Left = 272
+        Top = 20
+        Width = 65
+        Height = 22
+        Hint = 'Set angle at 0 degress'
+        GroupIndex = 2
+        Down = True
+        Caption = '0 degress'
+        Flat = True
+        OnClick = RotateSpeedButton0Click
+      end
+      object RotateSpeedButton90: TSpeedButton
+        Left = 336
+        Top = 20
+        Width = 65
+        Height = 22
+        Hint = 'Set angle at 90 degress'
+        GroupIndex = 2
+        Caption = '90 degress'
+        Flat = True
+        OnClick = RotateSpeedButton90Click
+      end
+      object RotateSpeedButton180: TSpeedButton
+        Left = 400
+        Top = 20
+        Width = 65
+        Height = 22
+        Hint = 'Set angle at 180 degress'
+        GroupIndex = 2
+        Caption = '180 degress'
+        Flat = True
+        OnClick = RotateSpeedButton180Click
+      end
+      object RotateSpeedButton270: TSpeedButton
+        Left = 464
+        Top = 20
+        Width = 65
+        Height = 22
+        Hint = 'Set angle at 270 degress'
+        GroupIndex = 2
+        Caption = '270 degress'
+        Flat = True
+        OnClick = RotateSpeedButton270Click
+      end
       object BackgroundPalettePanel1: TPanel
         Left = 8
         Top = 48

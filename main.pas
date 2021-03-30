@@ -121,6 +121,10 @@ type
     N2: TMenuItem;
     CopyAsImage1: TMenuItem;
     Paste2: TMenuItem;
+    RotateSpeedButton0: TSpeedButton;
+    RotateSpeedButton90: TSpeedButton;
+    RotateSpeedButton180: TSpeedButton;
+    RotateSpeedButton270: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -175,6 +179,10 @@ type
     procedure CopyAsImage1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
     procedure Cut2Click(Sender: TObject);
+    procedure RotateSpeedButton0Click(Sender: TObject);
+    procedure RotateSpeedButton90Click(Sender: TObject);
+    procedure RotateSpeedButton180Click(Sender: TObject);
+    procedure RotateSpeedButton270Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -196,9 +204,14 @@ type
     rmousedownx, rmousedowny: integer;
     lmousemovex, lmousemovey: integer;
     bktile: integer;
-    bkpalbitmap: TBitmap;
+    bkpalbitmap0: TBitmap;
+    bkpalbitmap1: TBitmap;
+    bkpalbitmap2: TBitmap;
+    bkpalbitmap3: TBitmap;
     closing: boolean;
     anglerotated: array[0..SCREENSIZEX - 1, 0..SCREENSIZEY - 1] of boolean;
+    curangle: integer;
+    bkpalx, bkpaly: integer;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
@@ -276,6 +289,8 @@ begin
   lmousemovex := 0;
   lmousemovey := 0;
 
+  curangle := 0;
+
   buffer := TBitmap.Create;
   buffer.Width := SCREENSIZEX * TILESIZE;
   buffer.Height := SCREENSIZEY * TILESIZE;
@@ -331,7 +346,10 @@ begin
   GridButton1.Down := opt_showgrid;
   zoom := GetIntInRange(opt_zoom, MINZOOM, MAXZOOM);
 
-  bkpalbitmap := TBitmap.Create;
+  bkpalbitmap0 := TBitmap.Create;
+  bkpalbitmap1 := TBitmap.Create;
+  bkpalbitmap2 := TBitmap.Create;
+  bkpalbitmap3 := TBitmap.Create;
 
   tmpmap := TMapTexture.Create;
 
@@ -340,20 +358,62 @@ begin
     for i := 0 to 15 do
     begin
       tmpmap.MapTiles[i, j] := tile;
+      tmpmap.Angles[i, j] := 0;
       inc(tile);
     end;
 
-  bkpalbitmap.Width := 2048;
-  bkpalbitmap.Height := 2048;
+  bkpalbitmap0.Width := 2048;
+  bkpalbitmap0.Height := 2048;
 
   tmpmap.GetBitmap(buffer, False);
-  bkpalbitmap.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap.Width - 1, bkpalbitmap.Height - 1), buffer);
-  bkpalbitmap.Width := 512;
-  bkpalbitmap.Height := 512;
+  bkpalbitmap0.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap0.Width - 1, bkpalbitmap0.Height - 1), buffer);
+  bkpalbitmap0.Width := 512;
+  bkpalbitmap0.Height := 512;
+
+  // 90 degress
+  for j := 0 to 15 do
+    for i := 0 to 15 do
+      tmpmap.Angles[i, j] := 1;
+
+  bkpalbitmap1.Width := 2048;
+  bkpalbitmap1.Height := 2048;
+
+  tmpmap.GetBitmap(buffer, False);
+  bkpalbitmap1.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap1.Width - 1, bkpalbitmap1.Height - 1), buffer);
+  bkpalbitmap1.Width := 512;
+  bkpalbitmap1.Height := 512;
+
+  // 180 degress
+  for j := 0 to 15 do
+    for i := 0 to 15 do
+      tmpmap.Angles[i, j] := 2;
+
+  bkpalbitmap2.Width := 2048;
+  bkpalbitmap2.Height := 2048;
+
+  tmpmap.GetBitmap(buffer, False);
+  bkpalbitmap2.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap2.Width - 1, bkpalbitmap2.Height - 1), buffer);
+  bkpalbitmap2.Width := 512;
+  bkpalbitmap2.Height := 512;
+
+  // 270 degress
+  for j := 0 to 15 do
+    for i := 0 to 15 do
+      tmpmap.Angles[i, j] := 3;
+
+  bkpalbitmap3.Width := 2048;
+  bkpalbitmap3.Height := 2048;
+
+  tmpmap.GetBitmap(buffer, False);
+  bkpalbitmap3.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap3.Width - 1, bkpalbitmap3.Height - 1), buffer);
+  bkpalbitmap3.Width := 512;
+  bkpalbitmap3.Height := 512;
 
   tmpmap.Free;
 
-  HandlePaletteImage(BackgroundPalette1.Width - 1, BackgroundPalette1.Height - 1, BackgroundPalette1, bkpalbitmap, 'BK', bktile);
+  bkpalx := 1;
+  bkpaly := 1;
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0, '0', bktile);
 
   doCreate := True;
   if ParamCount > 0 then
@@ -403,7 +463,10 @@ begin
   exportbuffer.Free;
   drawbuffer.Free;
 
-  bkpalbitmap.Free;
+  bkpalbitmap0.Free;
+  bkpalbitmap1.Free;
+  bkpalbitmap2.Free;
+  bkpalbitmap3.Free;
 
   maptexture.Free;
   backscreen.Free;
@@ -491,11 +554,13 @@ end;
 procedure TForm1.EditActionFreeDraw(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := bktile;
+  maptexture.Angles[X, Y] := curangle;
 end;
 
 procedure TForm1.EditActionErase(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := 0;
+  maptexture.Angles[X, Y] := 0;
 end;
 
 procedure TForm1.EditActionFloodFill(const X, Y: integer);
@@ -506,6 +571,7 @@ begin
   if rover <> bktile then
   begin
     maptexture.MapTiles[X, Y] := bktile;
+    maptexture.Angles[X, Y] := curangle;
     if X > 0 then
       if maptexture.MapTiles[X - 1, Y] = rover then
         EditActionFloodFill(X - 1, Y);
@@ -533,12 +599,16 @@ begin
   for i := aleft to aright do
   begin
     maptexture.MapTiles[i, atop] := bktile;
+    maptexture.Angles[i, atop] := curangle;
     maptexture.MapTiles[i, abottom] := bktile;
+    maptexture.Angles[i, abottom] := curangle;
   end;
   for i := atop + 1 to abottom - 1 do
   begin
     maptexture.MapTiles[aleft, i] := bktile;
+    maptexture.Angles[aleft, i] := curangle;
     maptexture.MapTiles[aright, i] := bktile;
+    maptexture.Angles[aright, i] := curangle;
   end;
 end;
 
@@ -553,12 +623,16 @@ begin
   abottom := MaxI(lmousedowny, Y);
   for i := aleft to aright do
     for j := atop to abottom do
+    begin
       maptexture.MapTiles[i, j] := bktile;
+      maptexture.Angles[i, j] := curangle;
+    end;
 end;
 
 procedure TForm1.EditActionLine(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := bktile;
+  maptexture.Angles[X, Y] := curangle;
 end;
 
 procedure TForm1.midpointellipse(const X, Y: integer; const filled: boolean);
@@ -573,7 +647,10 @@ var
   begin
     if IsIntInRange(ax, 0, SCREENSIZEX - 1) then
       if IsIntInRange(ay, 0, SCREENSIZEY - 1) then
+      begin
         maptexture.MapTiles[ax, ay] := bktile;
+        maptexture.Angles[ax, ay] := curangle;
+      end;
   end;
 
 begin
@@ -865,7 +942,7 @@ begin
   lmousemovex := ZoomValueX(X);
   lmousemovey := ZoomValueY(Y);
   StatusBar1.SimpleText := Format(
-    'Position: (%d, %d), Tile Id: (#%d), Angle: (#%d)',
+    'Position: (%d, %d), Tile Id: (#%d), Angle: (%d degress)',
       [lmousemovex, lmousemovey,
        maptexture.MapTiles[lmousemovex, lmousemovey],
        maptexture.Angles[lmousemovex, lmousemovey] * 90]);
@@ -1189,6 +1266,9 @@ begin
   if not IsIntInRange(Y, 0, Palette1.Height - 1) then
     Exit;
 
+  bkpalx := X;
+  bkpaly := Y;
+
   cc := (X div 32) + (Y div 32) * 16;
 
   Palette1.Picture.Bitmap.Width := 512;
@@ -1220,7 +1300,13 @@ end;
 procedure TForm1.BackgroundPalette1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap, 'BK', bktile);
+  case curangle of
+    0: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap0, '0', bktile);
+    1: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap1, '90', bktile);
+    2: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap2, '180', bktile);
+  else
+    HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap3, '180', bktile);
+  end;
 end;
 
 procedure TForm1.FreeDrawSpeedButtonClick(Sender: TObject);
@@ -1435,6 +1521,30 @@ begin
   maptexture.Angles[rmousedownx, rmousedowny] := 0;
   needsupdate := True;
   needbuffersupdate := True;
+end;
+
+procedure TForm1.RotateSpeedButton0Click(Sender: TObject);
+begin
+  curangle := 0;
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0, '0', bktile);
+end;
+
+procedure TForm1.RotateSpeedButton90Click(Sender: TObject);
+begin
+  curangle := 1;
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap1, '90', bktile);
+end;
+
+procedure TForm1.RotateSpeedButton180Click(Sender: TObject);
+begin
+  curangle := 2;
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap2, '180', bktile);
+end;
+
+procedure TForm1.RotateSpeedButton270Click(Sender: TObject);
+begin
+  curangle := 3;
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap3, '270', bktile);
 end;
 
 end.
