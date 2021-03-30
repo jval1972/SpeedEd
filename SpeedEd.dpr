@@ -87,7 +87,8 @@ uses
   GR32_VectorUtils in 'Graphics32\GR32_VectorUtils.pas',
   GR32_VPR in 'Graphics32\GR32_VPR.pas',
   GR32_VPR2 in 'Graphics32\GR32_VPR2.pas',
-  GR32_XPThemes in 'Graphics32\GR32_XPThemes.pas';
+  GR32_XPThemes in 'Graphics32\GR32_XPThemes.pas',
+  se_scriptengine in 'se_scriptengine.pas';
 
 {$R *.res}
 
