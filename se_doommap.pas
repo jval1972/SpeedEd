@@ -26,16 +26,12 @@
 //  Site  : https://sourceforge.net/projects/speed/
 //------------------------------------------------------------------------------
 
-unit main;
-
 unit se_doommap;
 
 interface
 
-{ F:\DelphiDoom_Release\SPEEDHASTE\garbage\sample_map.wad (30/3/2021 9:12:20 μμ)
-  StartOffset: 00000000, EndOffset: 000086BA, Μήκος: 000086BB }
-
-DOOMMAP: array[0..34490] of Byte = (
+const
+  DOOMMAP: array[0..34490] of Byte = (
   $50, $57, $41, $44, $0B, $00, $00, $00, $0B, $86, $00, $00, $00, $00, $01,
   $00, $05, $08, $00, $00, $00, $00, $00, $00, $01, $00, $01, $00, $02, $00,
   $05, $08, $00, $00, $00, $00, $02, $00, $03, $00, $02, $00, $03, $00, $05,
