@@ -3797,7 +3797,7 @@ object Form1: TForm1
         Caption = '-'
       end
       object Export1: TMenuItem
-        Caption = 'Export'
+        Caption = 'Export Image'
         Hint = 'Export as image '
         ShortCut = 16453
         OnClick = Export1Click
