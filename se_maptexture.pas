@@ -354,6 +354,7 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to 8191 do
         begin
+          bb := bmbuffer8192[ix, iy];
           c := RGBpal[bb];
           ln[ix] := c;
         end;
