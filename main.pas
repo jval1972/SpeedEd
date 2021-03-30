@@ -116,6 +116,11 @@ type
     SavePictureDialog1: TSavePictureDialog;
     RotateRightSpeedButton: TSpeedButton;
     RotateLeftSpeedButton: TSpeedButton;
+    PasteSpeedButton1: TSpeedButton;
+    Paste1: TMenuItem;
+    N2: TMenuItem;
+    CopyAsImage1: TMenuItem;
+    Paste2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -167,6 +172,9 @@ type
     procedure Export1Click(Sender: TObject);
     procedure RotateRightSpeedButtonClick(Sender: TObject);
     procedure RotateLeftSpeedButtonClick(Sender: TObject);
+    procedure CopyAsImage1Click(Sender: TObject);
+    procedure Paste1Click(Sender: TObject);
+    procedure Cut2Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -185,8 +193,9 @@ type
     lmousetraceposition: boolean;
     lmouseclearonmove: boolean;
     lmousedownx, lmousedowny: integer;
+    rmousedownx, rmousedowny: integer;
     lmousemovex, lmousemovey: integer;
-    bktile: LongWord;
+    bktile: integer;
     bkpalbitmap: TBitmap;
     closing: boolean;
     anglerotated: array[0..SCREENSIZEX - 1, 0..SCREENSIZEY - 1] of boolean;
@@ -214,7 +223,7 @@ type
     function CheckCanClose: boolean;
     procedure SetFileName(const fname: string);
     procedure HandlePaletteImage(const X, Y: integer; const Palette1: TImage;
-      const palbitmap: TBitmap; const tx: string; var cc: LongWord);
+      const palbitmap: TBitmap; const tx: string; var cc: integer);
     procedure EditActionFreeDraw(const X, Y: integer);
     procedure EditActionErase(const X, Y: integer);
     procedure EditActionFloodFill(const X, Y: integer);
@@ -262,6 +271,8 @@ begin
   lmouseclearonmove := False;
   lmousedownx := 0;
   lmousedowny := 0;
+  rmousedownx := 0;
+  rmousedowny := 0;
   lmousemovex := 0;
   lmousemovey := 0;
 
@@ -407,8 +418,10 @@ procedure TForm1.UpdateEnable;
 begin
   Undo1.Enabled := undoManager.CanUndo;
   Redo1.Enabled := undoManager.CanRedo;
+  Paste1.Enabled := Clipboard.HasFormat(CF_TEXT);
   UndoSpeedButton1.Enabled := undoManager.CanUndo;
   RedoSpeedButton1.Enabled := undoManager.CanRedo;
+  PasteSpeedButton1.Enabled := Clipboard.HasFormat(CF_TEXT);
   ZoomInSpeedButton1.Enabled := zoom < MAXZOOM;
   ZoomOutSpeedButton1.Enabled := zoom > MINZOOM;
   if needsupdate then
@@ -442,8 +455,7 @@ end;
 
 procedure TForm1.Copy1Click(Sender: TObject);
 begin
-  CreateExportBuffer;
-  Clipboard.Assign(exportbuffer);
+  try Clipboard.AsText := maptexture.GetExportText; except end;
 end;
 
 procedure TForm1.Open1Click(Sender: TObject);
@@ -473,6 +485,7 @@ procedure TForm1.Edit1Click(Sender: TObject);
 begin
   Undo1.Enabled := undoManager.CanUndo;
   Redo1.Enabled := undoManager.CanRedo;
+  Paste1.Enabled := Clipboard.HasFormat(CF_TEXT);
 end;
 
 procedure TForm1.EditActionFreeDraw(const X, Y: integer);
@@ -826,6 +839,11 @@ begin
       ZeroMemory(@anglerotated, SizeOf(anglerotated));
 
     LLeftMousePaintTo(lmousemovex, lmousemovey);
+  end
+  else if button = mbRight then
+  begin
+    rmousedownx := ZoomValueX(X);
+    rmousedowny := ZoomValueX(Y);
   end;
 end;
 
@@ -1156,7 +1174,7 @@ begin
 end;
 
 procedure TForm1.HandlePaletteImage(const X, Y: integer; const Palette1: TImage;
-  const palbitmap: TBitmap; const tx: string; var cc: LongWord);
+  const palbitmap: TBitmap; const tx: string; var cc: integer);
 var
   px, py: integer;
   C: TCanvas;
@@ -1315,12 +1333,15 @@ procedure TForm1.Cut1Click(Sender: TObject);
 var
   x, y: integer;
 begin
-  Clipboard.Assign(buffer);
+  try Clipboard.AsText := maptexture.GetExportText; except end;
   undoManager.SaveUndo;
   Changed := True;
   for x := 0 to SCREENSIZEX - 1 do
     for y := 0 to SCREENSIZEY - 1 do
+    begin
       maptexture.MapTiles[x, y] := 0;
+      maptexture.Angles[x, y] := 0;
+    end;
   needsupdate := True;
   needbuffersupdate := True;
 end;
@@ -1329,6 +1350,7 @@ procedure TForm1.PaintBoxPopupMenu1Popup(Sender: TObject);
 begin
   Undo2.Enabled := undoManager.CanUndo;
   Redo2.Enabled := undoManager.CanRedo;
+  Paste2.Enabled := Clipboard.HasFormat(CF_TEXT);
 end;
 
 procedure TForm1.Export1Click(Sender: TObject);
@@ -1386,6 +1408,33 @@ begin
   lmouserecalcdown := True;
   lmousetraceposition := True;
   lmouseclearonmove := False;
+end;
+
+procedure TForm1.CopyAsImage1Click(Sender: TObject);
+begin
+  CreateExportBuffer;
+  Clipboard.Assign(buffer);
+end;
+
+procedure TForm1.Paste1Click(Sender: TObject);
+begin
+  if Clipboard.HasFormat(CF_TEXT) then
+  begin
+    maptexture.ApplyImportText(Clipboard.AsText);
+    needsupdate := True;
+    needbuffersupdate := True;
+  end;
+end;
+
+procedure TForm1.Cut2Click(Sender: TObject);
+begin
+  try Clipboard.AsText := maptexture.GetExportText(rmousedownx, rmousedowny); except end;
+  undoManager.SaveUndo;
+  Changed := True;
+  maptexture.MapTiles[rmousedownx, rmousedowny] := 0;
+  maptexture.Angles[rmousedownx, rmousedowny] := 0;
+  needsupdate := True;
+  needbuffersupdate := True;
 end;
 
 end.

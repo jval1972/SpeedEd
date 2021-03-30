@@ -63,6 +63,8 @@ type
     procedure Clear;
     procedure SaveToStream(const strm: TStream);
     procedure LoadFromStream(const strm: TStream);
+    function GetExportText(const x: integer = -1; const y: integer = -1): string;
+    procedure ApplyImportText(const tx: string);
     procedure GetBitmap(const b: TBitmap; const doublesize: boolean);
     procedure AssignTo(const amaptexture: TMapTexture);
     property MapTiles[x, y: integer]: integer read GetMapTile write SetMapTile;
@@ -72,7 +74,7 @@ type
 implementation
 
 uses
-  se_grafs;
+  se_grafs, se_scriptengine;
 
 constructor TMapTexture.Create;
 begin
@@ -121,7 +123,7 @@ begin
   data.angles[idx] := ang;
 end;
 
-function TMapTexture.GetAngle(x, y: integer): integer; 
+function TMapTexture.GetAngle(x, y: integer): integer;
 var
   idx: integer;
 begin
@@ -137,6 +139,64 @@ end;
 procedure TMapTexture.LoadFromStream(const strm: TStream);
 begin
   strm.Read(data^, SizeOf(maptexture_t));
+end;
+
+function TMapTexture.GetExportText(const x: integer = -1; const y: integer = -1): string;
+var
+  iX, iY: integer;
+
+  function _elem_str(const xx, yy: integer): string;
+  begin
+    Result := IntToStr(xx) + ' ' + IntToStr(yy) + ' ' + IntToStr(GetMapTile(xx, yy)) + ' ' + IntToStr(GetAngle(xx, yy)) + #13#10;
+  end;
+
+begin
+  Result := '';
+
+  if (x = -1) and (y = -1) then
+  begin
+    for iX := 0 to SCREENSIZEX - 1 do
+      for iY := 0 to SCREENSIZEY - 1 do
+        Result := Result + _elem_str(iX, iY);
+    Exit;
+  end;
+
+  if x = -1 then
+  begin
+    for iX := 0 to SCREENSIZEX - 1 do
+      Result := Result + _elem_str(iX, y);
+    Exit;
+  end;
+
+  if y = -1 then
+  begin
+    for iY := 0 to SCREENSIZEY - 1 do
+      Result := Result + _elem_str(x, iY);
+    Exit;
+  end;
+
+  Result := _elem_str(x, y);
+end;
+
+procedure TMapTexture.ApplyImportText(const tx: string);
+var
+  sc: TScriptEngine;
+  x, y, tile, ang: integer;
+begin
+  sc := TScriptEngine.Create(tx);
+  while sc.GetInteger do
+  begin
+    x := sc._Integer;
+    sc.MustGetInteger;
+    y := sc._Integer;
+    sc.MustGetInteger;
+    tile := sc._Integer;
+    sc.MustGetInteger;
+    ang := sc._Integer;
+    SetMapTile(x, y, tile);
+    SetAngle(x, y, ang);
+  end;
+  sc.Free;
 end;
 
 procedure TMapTexture.GetBitmap(const b: TBitmap; const doublesize: boolean);
