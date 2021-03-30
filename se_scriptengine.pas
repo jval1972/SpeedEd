@@ -179,7 +179,7 @@ begin
     result := true;
   end
   else
-    result := true;
+    result := false;
 end;
 
 procedure TScriptEngine.MustGetInteger;
