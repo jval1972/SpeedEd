@@ -87,9 +87,14 @@ procedure TWadWriter.AddData(const lumpname: string; const data: pointer; const 
 var
   m: TMemoryStream;
 begin
-  m := TMemoryStream.Create;
-  m.Write(data^, size);
-  lumps.AddObject(UpperCase(lumpname), m);
+  if size > 0 then
+  begin
+    m := TMemoryStream.Create;
+    m.Write(data^, size);
+    lumps.AddObject(UpperCase(lumpname), m);
+  end
+  else
+    lumps.Add(UpperCase(lumpname)); // separator
 end;
 
 procedure TWadWriter.AddString(const lumpname: string; const data: string);

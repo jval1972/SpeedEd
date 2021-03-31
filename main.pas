@@ -1725,6 +1725,9 @@ var
   wadw: TWadWriter;
   i: integer;
   buf8192: bmbuffer8192_p;
+  ename: string;
+  ebuffer: pointer;
+  esize: integer;
 begin
   ms := TMemoryStream.Create;
   ms.Write(DOOMMAP, SizeOf(DOOMMAP));
@@ -1736,7 +1739,13 @@ begin
   wadw := TWadWriter.Create;
 
   for i := 0 to wadr.NumEntries - 1 do
-    wadw.AddString(wadr.EntryName(i), wadr.EntryAsString(i));
+  begin
+    ename := wadr.EntryName(i);
+    wadr.ReadEntry(i, ebuffer, esize);
+    wadw.AddData(ename, ebuffer, esize);
+    FreeMem(ebuffer, esize);
+  end;
+//    wadw.AddString(wadr.EntryName(i), wadr.EntryAsString(i));
 
   GetMem(buf8192, SizeOf(bmbuffer8192_t));
 
