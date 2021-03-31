@@ -23,7 +23,7 @@
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
-//  Site  : https://sourceforge.net/projects/speed/
+//  Site  : https://sourceforge.net/projects/speed-game/
 //------------------------------------------------------------------------------
 
 program SpeedEd;
