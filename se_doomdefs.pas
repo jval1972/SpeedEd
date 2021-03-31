@@ -19,45 +19,30 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  Project file
+//  Doom data definitions
 //
 //------------------------------------------------------------------------------
 //  E-Mail: jimmyvalavanis@yahoo.gr
 //  Site  : https://sourceforge.net/projects/speed-game/
 //------------------------------------------------------------------------------
 
-program SpeedEd;
+unit se_doomdefs;
 
-uses
-  FastMM4 in 'FastMM4.pas',
-  FastMM4Messages in 'FastMM4Messages.pas',
-  Forms,
-  main in 'main.pas' {Form1},
-  pngextra in 'pngextra.pas',
-  pngimage in 'pngimage.pas',
-  pnglang in 'pnglang.pas',
-  xTGA in 'xTGA.pas',
-  zBitmap in 'zBitmap.pas',
-  zlibpas in 'zlibpas.pas',
-  se_utils in 'se_utils.pas',
-  se_binary in 'se_binary.pas',
-  se_filemenuhistory in 'se_filemenuhistory.pas',
-  se_undo in 'se_undo.pas',
-  se_defs in 'se_defs.pas',
-  se_maptexture in 'se_maptexture.pas',
-  se_grafs in 'se_grafs.pas',
-  se_scriptengine in 'se_scriptengine.pas',
-  se_doommap in 'se_doommap.pas',
-  se_wad in 'se_wad.pas',
-  se_wadreader in 'se_wadreader.pas',
-  se_wadwriter in 'se_wadwriter.pas',
-  se_doomdefs in 'se_doomdefs.pas';
+interface
 
-{$R *.res}
+type
+  mapsector_t = record
+    floorheight: smallint;
+    ceilingheight: smallint;
+    floorpic: char8_t;
+    ceilingpic: char8_t;
+    lightlevel: smallint;
+    special: smallint;
+    tag: smallint;
+  end;
+  Pmapsector_t = ^mapsector_t;
 
-begin
-  Application.Initialize;
-  Application.Title := 'GLSpeed Tile Editor';
-  Application.CreateForm(TForm1, Form1);
-  Application.Run;
+implementation
+
 end.
+ 
