@@ -1767,6 +1767,7 @@ begin
   GetMem(buf8192, SizeOf(bmbuffer8192_t));
 
   maptexture.GetBuffer8192(buf8192);
+  wadw.AddString('FLATINFO', flatname + '=8192');
   wadw.AddSeparator('F_START');
   wadw.AddData(flatname, buf8192, SizeOf(bmbuffer8192_t));
   wadw.AddSeparator('F_END');
@@ -1776,7 +1777,7 @@ begin
   ms := TMemoryStream.Create;
   maptexture.SaveToStream(ms);
 
-  wadw.AddData(lname + '.DAT', ms.Memory, ms.Size);
+  wadw.AddData(mname + '_DAT', ms.Memory, ms.Size);
   ms.Free;
 
   wadw.SaveToFile(fn);
