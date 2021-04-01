@@ -3802,8 +3802,12 @@ object Form1: TForm1
         ShortCut = 16453
         OnClick = Export1Click
       end
+      object ExportWAD40961: TMenuItem
+        Caption = 'Export WAD (4096)'
+        OnClick = ExportWAD40961Click
+      end
       object ExportWAD1: TMenuItem
-        Caption = 'Export WAD'
+        Caption = 'Export WAD (8192)'
         OnClick = ExportWAD1Click
       end
       object N1: TMenuItem

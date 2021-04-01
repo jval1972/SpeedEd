@@ -131,6 +131,7 @@ type
     PasteHere1: TMenuItem;
     ExportWAD1: TMenuItem;
     SaveWADDialog: TSaveDialog;
+    ExportWAD40961: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -193,6 +194,7 @@ type
     procedure PasteIntoSelection1Click(Sender: TObject);
     procedure PasteHere1Click(Sender: TObject);
     procedure ExportWAD1Click(Sender: TObject);
+    procedure ExportWAD40961Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -267,7 +269,8 @@ type
     procedure ClearSelection;
     function HasSelection: boolean;
     procedure CopyToClipboardAsText;
-    procedure DoExportWAD(const fn: string; const lname: string);
+    procedure DoExportWAD4096(const fn: string; const lname: string);
+    procedure DoExportWAD8192(const fn: string; const lname: string);
   public
     { Public declarations }
   end;
@@ -1718,8 +1721,77 @@ begin
   end;
 end;
 
+procedure TForm1.DoExportWAD4096(const fn: string; const lname: string);
+var
+  ms: TMemoryStream;
+  wadr: TWadReader;
+  wadw: TWadWriter;
+  i: integer;
+  buf4096: bmbuffer4096_p;
+  ename: string;
+  ebuffer: pointer;
+  esize: integer;
+  mname: string;
+  msec: Pmapsector_t;
+  flatname: string;
+begin
+  ms := TMemoryStream.Create;
+  ms.Write(DOOMMAP, SizeOf(DOOMMAP));
+  ms.Position := 0;
 
-procedure TForm1.DoExportWAD(const fn: string; const lname: string);
+  wadr := TWadReader.Create;
+  wadr.LoadFromStream(ms);
+
+  wadw := TWadWriter.Create;
+
+  mname := lname;
+  if Length(mname) <> 4 then
+    mname := 'E2M1';
+
+  flatname := mname + 'FLAT';
+
+  for i := 0 to wadr.NumEntries - 1 do
+  begin
+    ename := wadr.EntryName(i);
+    wadr.ReadEntry(i, ebuffer, esize);
+    if ename = 'E1M1' then
+      ename := mname;
+    if ename = 'SECTORS' then
+    begin
+      msec := ebuffer;
+      msec.floorpic := stringtochar8(flatname);
+    end;
+    wadw.AddData(ename, ebuffer, esize);
+    FreeMem(ebuffer, esize);
+  end;
+//    wadw.AddString(wadr.EntryName(i), wadr.EntryAsString(i));
+
+  GetMem(buf4096, SizeOf(bmbuffer4096_t));
+
+  maptexture.GetBuffer4096(buf4096);
+  wadw.AddString('FLATINFO', flatname + '=8192');
+  wadw.AddSeparator('F_START');
+  wadw.AddData(flatname, buf4096, SizeOf(bmbuffer4096_t));
+  wadw.AddSeparator('F_END');
+
+  ms.Free;
+
+  ms := TMemoryStream.Create;
+  maptexture.SaveToStream(ms);
+
+  wadw.AddData(mname + '_DAT', ms.Memory, ms.Size);
+  ms.Free;
+
+  wadw.SaveToFile(fn);
+
+
+  wadw.Free;
+  wadr.Free;
+
+  FreeMem(buf4096);
+end;
+
+procedure TForm1.DoExportWAD8192(const fn: string; const lname: string);
 var
   ms: TMemoryStream;
   wadr: TWadReader;
@@ -1777,7 +1849,7 @@ begin
   ms := TMemoryStream.Create;
   maptexture.SaveToStream(ms);
 
-  wadw.AddData(mname + '_TEX', ms.Memory, ms.Size);
+  wadw.AddData(mname + '_DAT', ms.Memory, ms.Size);
   ms.Free;
 
   wadw.SaveToFile(fn);
@@ -1798,7 +1870,20 @@ begin
     lname := 'E2M1';
     lname := InputBox(rsTitle, 'Map name', lname);
     BackupFile(SaveWADDialog.FileName);
-    DoExportWAD(SaveWADDialog.FileName, lname);
+    DoExportWAD8192(SaveWADDialog.FileName, lname);
+  end;
+end;
+
+procedure TForm1.ExportWAD40961Click(Sender: TObject);
+var
+  lname: string;
+begin
+  if SaveWADDialog.Execute then
+  begin
+    lname := 'E2M1';
+    lname := InputBox(rsTitle, 'Map name', lname);
+    BackupFile(SaveWADDialog.FileName);
+    DoExportWAD4096(SaveWADDialog.FileName, lname);
   end;
 end;
 
