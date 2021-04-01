@@ -267,7 +267,7 @@ type
     procedure ClearSelection;
     function HasSelection: boolean;
     procedure CopyToClipboardAsText;
-    procedure DoExportWAD(const fn: string);
+    procedure DoExportWAD(const fn: string; const lname: string);
   public
     { Public declarations }
   end;
@@ -280,7 +280,7 @@ implementation
 {$R *.dfm}
 
 uses
-  se_utils, se_defs, se_doommap, se_wadreader, se_wadwriter;
+  se_utils, se_defs, se_doommap, se_wadreader, se_wadwriter, se_wad, se_doomdefs;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
@@ -1718,7 +1718,8 @@ begin
   end;
 end;
 
-procedure TForm1.DoExportWAD(const fn: string);
+
+procedure TForm1.DoExportWAD(const fn: string; const lname: string);
 var
   ms: TMemoryStream;
   wadr: TWadReader;
@@ -1728,6 +1729,9 @@ var
   ename: string;
   ebuffer: pointer;
   esize: integer;
+  mname: string;
+  msec: Pmapsector_t;
+  flatname: string;
 begin
   ms := TMemoryStream.Create;
   ms.Write(DOOMMAP, SizeOf(DOOMMAP));
@@ -1738,10 +1742,23 @@ begin
 
   wadw := TWadWriter.Create;
 
+  mname := lname;
+  if Length(mname) <> 4 then
+    mname := 'E2M1';
+
+  flatname := mname + 'FLAT';
+
   for i := 0 to wadr.NumEntries - 1 do
   begin
     ename := wadr.EntryName(i);
     wadr.ReadEntry(i, ebuffer, esize);
+    if ename = 'E1M1' then
+      ename := mname;
+    if ename = 'SECTORS' then
+    begin
+      msec := ebuffer;
+      msec.floorpic := stringtochar8(flatname);
+    end;
     wadw.AddData(ename, ebuffer, esize);
     FreeMem(ebuffer, esize);
   end;
@@ -1751,22 +1768,37 @@ begin
 
   maptexture.GetBuffer8192(buf8192);
   wadw.AddSeparator('F_START');
-  wadw.AddData('E2M1FLAT', buf8192, SizeOf(bmbuffer8192_t));
+  wadw.AddData(flatname, buf8192, SizeOf(bmbuffer8192_t));
   wadw.AddSeparator('F_END');
+
+  ms.Free;
+
+  ms := TMemoryStream.Create;
+  maptexture.SaveToStream(ms);
+
+  wadw.AddData(lname + '.DAT', ms.Memory, ms.Size);
+  ms.Free;
+
   wadw.SaveToFile(fn);
+
 
   wadw.Free;
   wadr.Free;
-
-  ms.Free;
 
   FreeMem(buf8192);
 end;
 
 procedure TForm1.ExportWAD1Click(Sender: TObject);
+var
+  lname: string;
 begin
   if SaveWADDialog.Execute then
-    DoExportWAD(SaveWADDialog.FileName);
+  begin
+    lname := 'E2M1';
+    lname := InputBox(rsTitle, 'Map name', lname);
+    BackupFile(SaveWADDialog.FileName);
+    DoExportWAD(SaveWADDialog.FileName, lname);
+  end;
 end;
 
 end.

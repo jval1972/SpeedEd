@@ -30,8 +30,11 @@ unit se_doomdefs;
 
 interface
 
+uses
+  se_wad;
+
 type
-  mapsector_t = record
+  mapsector_t = packed record
     floorheight: smallint;
     ceilingheight: smallint;
     floorpic: char8_t;
