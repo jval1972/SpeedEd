@@ -1777,7 +1777,7 @@ begin
   ms := TMemoryStream.Create;
   maptexture.SaveToStream(ms);
 
-  wadw.AddData(mname + '_DAT', ms.Memory, ms.Size);
+  wadw.AddData(mname + '_TEX', ms.Memory, ms.Size);
   ms.Free;
 
   wadw.SaveToFile(fn);
