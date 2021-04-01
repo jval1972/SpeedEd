@@ -1406,7 +1406,7 @@ begin
     1: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap1, '90', bktile);
     2: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap2, '180', bktile);
   else
-    HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap3, '180', bktile);
+    HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap3, '270', bktile);
   end;
 end;
 
