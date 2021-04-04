@@ -64,11 +64,16 @@ const
   );
 
 type
-  buffer_t = packed array[0..4095] of byte;
-  bmbuffer4096_t = packed array[0..4095] of buffer_t;
+  buffer4096_t = packed array[0..4095] of byte;
+  bmbuffer4096_t = packed array[0..4095] of buffer4096_t;
   bmbuffer4096_p = ^bmbuffer4096_t;
   bmbuffer8192_t = packed array[0..8191] of packed array[0..8191] of byte;
   bmbuffer8192_p = ^bmbuffer8192_t;
+
+type
+  buffer1024_t = packed array[0..1023] of byte;
+  bmbuffer1024_t = packed array[0..1023] of buffer1024_t;
+  bmbuffer1024_p = ^bmbuffer1024_t;
 
 type
   TMapTexture = class(TObject)
@@ -338,14 +343,14 @@ var
           pt[ii * 64 + jj] := buf[jj * 64 + 63 - ii];
   end;
 
-  procedure GenerateMapBitmap;
+  procedure GenerateMapBitmap_4096_8192;
   var
     xb, yb: integer;
     ix, iy: integer;
     ig: integer;
     g, m: integer;
     tile: packed array[0..4095] of byte;
-    tmpbuf: buffer_t;
+    tmpbuf: buffer4096_t;
     it: integer;
     bmbuffer4096: bmbuffer4096_p;
     bmbuffer8192: bmbuffer8192_p;
@@ -452,7 +457,7 @@ begin
   for i := 0 to 255 do
     RGBpal[i] := RGB(pal[3 * i + 2] * 4, pal[3 * i + 1] * 4 + 2, pal[3 * i] * 4 + 2);
 
-  GenerateMapBitmap;
+  GenerateMapBitmap_4096_8192;
 end;
 
 procedure TMapTexture.GetBuffer4096(const buf4096: bmbuffer4096_p);
