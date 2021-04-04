@@ -1861,13 +1861,13 @@ begin
   FreeMem(buf8192);
 end;
 
-procedure TForm1.ExportWAD1Click(Sender: TObject);
 var
-  lname: string;
+  lname: string = 'E2M1';
+
+procedure TForm1.ExportWAD1Click(Sender: TObject);
 begin
   if SaveWADDialog.Execute then
   begin
-    lname := 'E2M1';
     lname := InputBox(rsTitle, 'Map name', lname);
     BackupFile(SaveWADDialog.FileName);
     DoExportWAD8192(SaveWADDialog.FileName, lname);
@@ -1875,12 +1875,9 @@ begin
 end;
 
 procedure TForm1.ExportWAD40961Click(Sender: TObject);
-var
-  lname: string;
 begin
   if SaveWADDialog.Execute then
   begin
-    lname := 'E2M1';
     lname := InputBox(rsTitle, 'Map name', lname);
     BackupFile(SaveWADDialog.FileName);
     DoExportWAD4096(SaveWADDialog.FileName, lname);
