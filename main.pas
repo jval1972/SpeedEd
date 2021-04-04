@@ -256,6 +256,7 @@ type
     selRect: TRect;
     recalcscrollbox: boolean;
     recalcscrollboxx, recalcscrollboxy: integer;
+    recalcscrollboxrx, recalcscrollboxry: integer;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
@@ -350,6 +351,8 @@ begin
   recalcscrollbox := False;
   recalcscrollboxx := 0;
   recalcscrollboxy := 0;
+  recalcscrollboxrx := 0;
+  recalcscrollboxry := 0;
 
   ClearSelection;
 
@@ -442,7 +445,6 @@ begin
     bkpalbitmap0[t].Width := 2048;
     bkpalbitmap0[t].Height := 2048;
 
-    tmpmap.GetBitmap(buffer, False);
     bkpalbitmap0[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap0[t].Width - 1, bkpalbitmap0[t].Height - 1), buffer);
     bkpalbitmap0[t].Width := 512;
     bkpalbitmap0[t].Height := 512;
@@ -458,7 +460,6 @@ begin
     bkpalbitmap1[t].Width := 2048;
     bkpalbitmap1[t].Height := 2048;
 
-    tmpmap.GetBitmap(buffer, False);
     bkpalbitmap1[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap1[t].Width - 1, bkpalbitmap1[t].Height - 1), buffer);
     bkpalbitmap1[t].Width := 512;
     bkpalbitmap1[t].Height := 512;
@@ -474,7 +475,6 @@ begin
     bkpalbitmap2[t].Width := 2048;
     bkpalbitmap2[t].Height := 2048;
 
-    tmpmap.GetBitmap(buffer, False);
     bkpalbitmap2[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap2[t].Width - 1, bkpalbitmap2[t].Height - 1), buffer);
     bkpalbitmap2[t].Width := 512;
     bkpalbitmap2[t].Height := 512;
@@ -490,7 +490,6 @@ begin
     bkpalbitmap3[t].Width := 2048;
     bkpalbitmap3[t].Height := 2048;
 
-    tmpmap.GetBitmap(buffer, False);
     bkpalbitmap3[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap3[t].Width - 1, bkpalbitmap3[t].Height - 1), buffer);
     bkpalbitmap3[t].Width := 512;
     bkpalbitmap3[t].Height := 512;
@@ -1396,6 +1395,7 @@ var
   w, h: integer;
   mx1, my1, mx2, my2: integer;
   currscrollx, currscrolly: integer;
+  currscrollrx, currscrollry: integer;
 begin
   tick := GetTickCount;
   if tick <= flastzoomwheel + MOUSEWHEELTIMEOUT then
@@ -1429,16 +1429,22 @@ begin
       begin
         currscrollx := recalcscrollboxx;
         currscrolly := recalcscrollboxy;
+        currscrollrx := recalcscrollboxrx;
+        currscrollry := recalcscrollboxry;
       end
       else
       begin
         currscrollx := ScrollBox1.HorzScrollBar.Position;
         currscrolly := ScrollBox1.VertScrollBar.Position;
+        currscrollrx := ScrollBox1.HorzScrollBar.Range;
+        currscrollry := ScrollBox1.VertScrollBar.Range;
       end;
 
       recalcscrollbox := True;
-      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
-      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, currscrollrx - 1);
+      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, currscrollry - 1);
+      recalcscrollboxrx := w;
+      recalcscrollboxry := h;
 //      recalcscrollboxx := GetIntInRange(Trunc(currscrollx * fx) + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
 //      recalcscrollboxy := GetIntInRange(Trunc(currscrolly * fy) + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
     end;
@@ -1455,6 +1461,7 @@ var
   w, h: integer;
   mx1, my1, mx2, my2: integer;
   currscrollx, currscrolly: integer;
+  currscrollrx, currscrollry: integer;
 begin
   tick := GetTickCount;
   if tick <= flastzoomwheel + MOUSEWHEELTIMEOUT then
@@ -1488,16 +1495,22 @@ begin
       begin
         currscrollx := recalcscrollboxx;
         currscrolly := recalcscrollboxy;
+        currscrollrx := recalcscrollboxrx;
+        currscrollry := recalcscrollboxry;
       end
       else
       begin
         currscrollx := ScrollBox1.HorzScrollBar.Position;
         currscrolly := ScrollBox1.VertScrollBar.Position;
+        currscrollrx := ScrollBox1.HorzScrollBar.Range;
+        currscrollry := ScrollBox1.VertScrollBar.Range;
       end;
 
       recalcscrollbox := True;
-      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
-      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, currscrollrx - 1);
+      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, currscrollry - 1);
+      recalcscrollboxrx := w;
+      recalcscrollboxry := h;
 //      recalcscrollboxx := GetIntInRange(Trunc(currscrollx * fx) + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
 //      recalcscrollboxy := GetIntInRange(Trunc(currscrolly * fy) + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
     end;
