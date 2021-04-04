@@ -1129,10 +1129,10 @@ begin
   stepw := drawbuffer.Width div SCREENSIZEX;
   steph := drawbuffer.Height div SCREENSIZEY;
 
-  sleft := sleft * stepw;
-  sright := (sright + 1) * stepw;
-  stop := stop * steph;
-  sbottom := (sbottom + 1) * steph;
+  sleft := GetIntInRange(sleft * stepw, 0, drawbuffer.Width - 1);
+  sright := GetIntInRange((sright + 1) * stepw, 0, drawbuffer.Width - 1);
+  stop := GetIntInRange(stop * steph, 0, drawbuffer.Height - 1);
+  sbottom := GetIntInRange((sbottom + 1) * steph, 0, drawbuffer.Height - 1);
 
   drawbuffer.Canvas.Pen.Style := psDash;
   drawbuffer.Canvas.Pen.Color := RGB(0, 0, 0);
