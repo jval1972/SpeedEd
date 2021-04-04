@@ -218,7 +218,7 @@ var
 
   function _elem_str(const xx, yy: integer): string;
   begin
-    Result := IntToStr(xx) + ' ' + IntToStr(yy) + ' ' + IntToStr(GetMapTile(xx, yy)) + ' ' + IntToStr(GetAngle(xx, yy)) + #13#10;
+    Result := IntToStr(xx) + ' ' + IntToStr(yy) + ' ' + IntToStr(GetMapTile(xx, yy)) + ' ' + IntToStr(GetAngle(xx, yy)) + ' ' + IntToStr(GetTranslation(xx, yy)) + #13#10;
   end;
 
 begin
@@ -253,7 +253,7 @@ procedure TMapTexture.ApplyImportText(const tx: string; const aX1: integer = -1;
 var
   sc: TScriptEngine;
   x, y, x2, y2: integer;
-  xx, yy, tile, ang: integer;
+  xx, yy, tile, ang, trans: integer;
   rx, ry: integer;
   cnt: integer;
 begin
@@ -295,6 +295,8 @@ begin
     tile := sc._Integer;
     sc.MustGetInteger;
     ang := sc._Integer;
+    sc.MustGetInteger;
+    trans := sc._Integer;
 
     if aX1 >= 0 then
       xx := xx - rX + aX1;
@@ -305,6 +307,7 @@ begin
       begin
         SetMapTile(xx, yy, tile);
         SetAngle(xx, yy, ang);
+        SetTranslation(xx, yy, trans);
       end;
   end;
   sc.Free;
