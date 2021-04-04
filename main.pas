@@ -445,6 +445,7 @@ begin
     bkpalbitmap0[t].Width := 2048;
     bkpalbitmap0[t].Height := 2048;
 
+    tmpmap.GetBitmap(buffer, False, 1024, 1024);
     bkpalbitmap0[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap0[t].Width - 1, bkpalbitmap0[t].Height - 1), buffer);
     bkpalbitmap0[t].Width := 512;
     bkpalbitmap0[t].Height := 512;
@@ -460,6 +461,7 @@ begin
     bkpalbitmap1[t].Width := 2048;
     bkpalbitmap1[t].Height := 2048;
 
+    tmpmap.GetBitmap(buffer, False, 1024, 1024);
     bkpalbitmap1[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap1[t].Width - 1, bkpalbitmap1[t].Height - 1), buffer);
     bkpalbitmap1[t].Width := 512;
     bkpalbitmap1[t].Height := 512;
@@ -475,6 +477,7 @@ begin
     bkpalbitmap2[t].Width := 2048;
     bkpalbitmap2[t].Height := 2048;
 
+    tmpmap.GetBitmap(buffer, False, 1024, 1024);
     bkpalbitmap2[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap2[t].Width - 1, bkpalbitmap2[t].Height - 1), buffer);
     bkpalbitmap2[t].Width := 512;
     bkpalbitmap2[t].Height := 512;
@@ -490,6 +493,7 @@ begin
     bkpalbitmap3[t].Width := 2048;
     bkpalbitmap3[t].Height := 2048;
 
+    tmpmap.GetBitmap(buffer, False, 1024, 1024);
     bkpalbitmap3[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap3[t].Width - 1, bkpalbitmap3[t].Height - 1), buffer);
     bkpalbitmap3[t].Width := 512;
     bkpalbitmap3[t].Height := 512;

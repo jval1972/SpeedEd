@@ -98,7 +98,7 @@ type
       const aY1: integer = -1; const aY2: integer = -1): string;
     procedure ApplyImportText(const tx: string; const aX1: integer = -1; const aX2: integer = -1;
       const aY1: integer = -1; const aY2: integer = -1);
-    procedure GetBitmap(const b: TBitmap; const doublesize: boolean);
+    procedure GetBitmap(const b: TBitmap; const doublesize: boolean; const sx: integer = -1; const sy: integer = -1);
     procedure GetBuffer4096(const buf4096: bmbuffer4096_p);
     procedure GetBuffer8192(const buf8192: bmbuffer8192_p);
     procedure AssignTo(const amaptexture: TMapTexture);
@@ -313,7 +313,7 @@ begin
   sc.Free;
 end;
 
-procedure TMapTexture.GetBitmap(const b: TBitmap; const doublesize: boolean);
+procedure TMapTexture.GetBitmap(const b: TBitmap; const doublesize: boolean; const sx: integer = -1; const sy: integer = -1);
 var
   grafs: PByteArray;
   grafsize: integer;
@@ -361,6 +361,7 @@ var
     c: LongWord;
     ln: PLongWordArray;
     trans: Ptranslationtable_t;
+    bsizex, bsizey: integer;
   begin
     GetMem(bmbuffer4096, SizeOf(bmbuffer4096_t));
     ZeroMemory(bmbuffer4096, SizeOf(bmbuffer4096_t));
@@ -419,10 +420,19 @@ var
       b.Width := 8192;
       b.Height := 8192;
 
-      for iy := 0 to 8191 do
+      if sx = -1 then
+        bsizex := 8192
+      else
+        bsizex := sx;
+      if sy = -1 then
+        bsizey := 8192
+      else
+        bsizey := sy;
+
+      for iy := 0 to bsizey - 1 do
       begin
         ln := b.ScanLine[iy];
-        for ix := 0 to 8191 do
+        for ix := 0 to bsizex - 1 do
         begin
           bb := bmbuffer8192[ix, iy];
           c := RGBpal[bb];
@@ -437,10 +447,19 @@ var
       b.Width := 4096;
       b.Height := 4096;
 
-      for iy := 0 to 4095 do
+      if sx = -1 then
+        bsizex := 4096
+      else
+        bsizex := sx;
+      if sy = -1 then
+        bsizey := 4096
+      else
+        bsizey := sy;
+
+      for iy := 0 to bsizey - 1 do
       begin
         ln := b.ScanLine[iy];
-        for ix := 0 to 4095 do
+        for ix := 0 to bsizex - 1 do
         begin
           bb := bmbuffer4096[ix, iy];
           c := RGBpal[bb];
