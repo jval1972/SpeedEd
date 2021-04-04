@@ -254,6 +254,8 @@ type
     curtrans: integer;
     bkpalx, bkpaly: integer;
     selRect: TRect;
+    recalcscrollbox: boolean;
+    recalcscrollboxx, recalcscrollboxy: integer;
     procedure Idle(Sender: TObject; var Done: Boolean);
     procedure Hint(Sender: TObject);
     procedure UpdateEnable;
@@ -344,6 +346,10 @@ begin
 
   curangle := 0;
   curtrans := 0;
+
+  recalcscrollbox := False;
+  recalcscrollboxx := 0;
+  recalcscrollboxy := 0;
 
   ClearSelection;
 
@@ -624,8 +630,27 @@ end;
 procedure TForm1.InvalidatePaintBox;
 begin
   CreateDrawBuffer;
-  PaintBox1.Width := drawbuffer.Width;
-  PaintBox1.Height := drawbuffer.Height;
+
+  if recalcscrollbox then
+  begin
+    SendMessage(ScrollBox1.Handle, WM_SETREDRAW, 0, 0);
+    try
+      PaintBox1.Width := drawbuffer.Width;
+      PaintBox1.Height := drawbuffer.Height;
+      ScrollBox1.HorzScrollBar.Position := recalcscrollboxx;
+      ScrollBox1.VertScrollBar.Position := recalcscrollboxy;
+    finally
+      SendMessage(ScrollBox1.Handle, WM_SETREDRAW, 1, 0);
+      RedrawWindow(ScrollBox1.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+    end;
+    recalcscrollbox := False;
+  end
+  else
+  begin
+    PaintBox1.Width := drawbuffer.Width;
+    PaintBox1.Height := drawbuffer.Height;
+  end;
+
   PaintBox1.Invalidate;
 end;
 
@@ -1367,19 +1392,57 @@ var
   pt: TPoint;
   r: TRect;
   tick: int64;
+  fx, fy: double;
+  w, h: integer;
+  mx1, my1, mx2, my2: integer;
+  currscrollx, currscrolly: integer;
 begin
   tick := GetTickCount;
   if tick <= flastzoomwheel + MOUSEWHEELTIMEOUT then
     Exit;
+
   flastzoomwheel := tick;
   pt := PaintBox1.Parent.ScreenToClient(MousePos);
   r := PaintBox1.ClientRect;
-{  if r.Right > ScrollBox1.Width then
-    r.Right := ScrollBox1.Width;
-  if r.Bottom > ScrollBox1.Height then
-    r.Bottom := ScrollBox1.Height;}
+
   if PtInRect(r, pt) then
+  begin
+    w := SCREENSIZEX * ((TILESIZE div MAXZOOM) * zoom);
+    h := SCREENSIZEY * ((TILESIZE div MAXZOOM) * zoom);
+
+    fx := pt.X / w;
+    fy := pt.Y / h;
+    mx1 := pt.X;
+    my1 := pt.Y;
+
     ZoomOut1Click(Sender);
+
+    if zoom > MINZOOM then
+    begin
+      w := SCREENSIZEX * ((TILESIZE div MAXZOOM) * zoom);
+      h := SCREENSIZEY * ((TILESIZE div MAXZOOM) * zoom);
+
+      mx2 := Trunc(fx * w);
+      my2 := Trunc(fy * h);
+
+      if recalcscrollbox then
+      begin
+        currscrollx := recalcscrollboxx;
+        currscrolly := recalcscrollboxy;
+      end
+      else
+      begin
+        currscrollx := ScrollBox1.HorzScrollBar.Position;
+        currscrolly := ScrollBox1.VertScrollBar.Position;
+      end;
+
+      recalcscrollbox := True;
+      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
+      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+//      recalcscrollboxx := GetIntInRange(Trunc(currscrollx * fx) + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
+//      recalcscrollboxy := GetIntInRange(Trunc(currscrolly * fy) + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+    end;
+  end;
 end;
 
 procedure TForm1.FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
@@ -1388,19 +1451,57 @@ var
   pt: TPoint;
   r: TRect;
   tick: int64;
+  fx, fy: double;
+  w, h: integer;
+  mx1, my1, mx2, my2: integer;
+  currscrollx, currscrolly: integer;
 begin
   tick := GetTickCount;
   if tick <= flastzoomwheel + MOUSEWHEELTIMEOUT then
     Exit;
+
   flastzoomwheel := tick;
   pt := PaintBox1.Parent.ScreenToClient(MousePos);
   r := PaintBox1.ClientRect;
-{  if r.Right > ScrollBox1.Width then
-    r.Right := ScrollBox1.Width;
-  if r.Bottom > ScrollBox1.Height then
-    r.Bottom := ScrollBox1.Height;}
+
   if PtInRect(r, pt) then
+  begin
+    w := SCREENSIZEX * ((TILESIZE div MAXZOOM) * zoom);
+    h := SCREENSIZEY * ((TILESIZE div MAXZOOM) * zoom);
+
+    fx := pt.X / w;
+    fy := pt.Y / h;
+    mx1 := pt.X;
+    my1 := pt.Y;
+
     ZoomIn1Click(Sender);
+
+    if zoom < MAXZOOM then
+    begin
+      w := SCREENSIZEX * ((TILESIZE div MAXZOOM) * zoom);
+      h := SCREENSIZEY * ((TILESIZE div MAXZOOM) * zoom);
+
+      mx2 := Trunc(fx * w);
+      my2 := Trunc(fy * h);
+
+      if recalcscrollbox then
+      begin
+        currscrollx := recalcscrollboxx;
+        currscrolly := recalcscrollboxy;
+      end
+      else
+      begin
+        currscrollx := ScrollBox1.HorzScrollBar.Position;
+        currscrolly := ScrollBox1.VertScrollBar.Position;
+      end;
+
+      recalcscrollbox := True;
+      recalcscrollboxx := GetIntInRange(currscrollx + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
+      recalcscrollboxy := GetIntInRange(currscrolly + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+//      recalcscrollboxx := GetIntInRange(Trunc(currscrollx * fx) + mx2 - mx1, 0, ScrollBox1.HorzScrollBar.Range - 1);
+//      recalcscrollboxy := GetIntInRange(Trunc(currscrolly * fy) + my2 - my1, 0, ScrollBox1.VertScrollBar.Range - 1);
+    end;
+  end;
 end;
 
 procedure TForm1.ZoomIn1Click(Sender: TObject);

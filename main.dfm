@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 84
+  Left = 82
   Top = 19
-  Width = 958
+  Width = 960
   Height = 796
   Caption = 'GLSpeed Tile Editor'
   Color = clBtnFace
@@ -1058,7 +1058,7 @@ object Form1: TForm1
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 942
+    Width = 944
     Height = 62
     Align = alTop
     Caption = ' '
@@ -2320,7 +2320,7 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Top = 718
-    Width = 942
+    Width = 944
     Height = 19
     Panels = <
       item
@@ -5320,7 +5320,7 @@ object Form1: TForm1
   object Panel4: TPanel
     Left = 553
     Top = 62
-    Width = 389
+    Width = 391
     Height = 656
     Align = alClient
     BevelOuter = bvNone
@@ -5329,8 +5329,10 @@ object Form1: TForm1
     object ScrollBox1: TScrollBox
       Left = 0
       Top = 0
-      Width = 389
+      Width = 391
       Height = 656
+      HorzScrollBar.Smooth = True
+      VertScrollBar.Smooth = True
       Align = alClient
       BevelEdges = []
       BevelInner = bvNone
