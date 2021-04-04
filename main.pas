@@ -143,6 +143,9 @@ type
     Trans8SpeedButton: TSpeedButton;
     Trans9SpeedButton: TSpeedButton;
     Trans10SpeedButton: TSpeedButton;
+    N7: TMenuItem;
+    Applytranslation1: TMenuItem;
+    Applyrotation1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -217,6 +220,8 @@ type
     procedure Trans8SpeedButtonClick(Sender: TObject);
     procedure Trans9SpeedButtonClick(Sender: TObject);
     procedure Trans10SpeedButtonClick(Sender: TObject);
+    procedure Applyrotation1Click(Sender: TObject);
+    procedure Applytranslation1Click(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -1065,10 +1070,12 @@ begin
   lmousemovex := ZoomValueX(X);
   lmousemovey := ZoomValueY(Y);
   StatusBar1.SimpleText := Format(
-    'Position: (%d, %d), Tile Id: (#%d), Angle: (%d degress)',
+    'Position: (%d, %d), Tile Id: #%d, Angle: %d degress, Translation: %d',
       [lmousemovex, lmousemovey,
        maptexture.MapTiles[lmousemovex, lmousemovey],
-       maptexture.Angles[lmousemovex, lmousemovey] * 90]);
+       maptexture.Angles[lmousemovex, lmousemovey] * 90,
+       maptexture.Translation[lmousemovex, lmousemovey]]
+      );
   if lmousedown then
   begin
     LLeftMousePaintTo(lmousemovex, lmousemovey);
@@ -1607,6 +1614,8 @@ begin
   Redo2.Enabled := undoManager.CanRedo;
   Paste2.Enabled := Clipboard.HasFormat(CF_TEXT);
   PasteIntoSelection2.Enabled := HasSelection;
+  Applyrotation1.Visible := HasSelection;
+  Applytranslation1.Visible := HasSelection;
 end;
 
 procedure TForm1.Export1Click(Sender: TObject);
@@ -2014,6 +2023,47 @@ end;
 procedure TForm1.Trans10SpeedButtonClick(Sender: TObject);
 begin
   ChangeEditorTranslation(10);
+end;
+
+procedure TForm1.Applyrotation1Click(Sender: TObject);
+var
+  sleft, stop, sright, sbottom: integer;
+  iX, iY: integer;
+begin
+  if not HasSelection then
+    Exit;
+
+  undoManager.SaveUndo;
+  sleft := MinI(selRect.Left, selRect.Right);
+  sright := MaxI(selRect.Left, selRect.Right);
+  stop := MinI(selRect.Top, selRect.Bottom);
+  sbottom := MaxI(selRect.Top, selRect.Bottom);
+
+  for iX := sleft to sright do
+    for iY := stop to sbottom do
+      maptexture.Angles[iX, iY] := curangle;
+end;
+
+procedure TForm1.Applytranslation1Click(Sender: TObject);
+var
+  sleft, stop, sright, sbottom: integer;
+  iX, iY: integer;
+begin
+  if not HasSelection then
+    Exit;
+
+  undoManager.SaveUndo;
+  sleft := MinI(selRect.Left, selRect.Right);
+  sright := MaxI(selRect.Left, selRect.Right);
+  stop := MinI(selRect.Top, selRect.Bottom);
+  sbottom := MaxI(selRect.Top, selRect.Bottom);
+
+  for iX := sleft to sright do
+    for iY := stop to sbottom do
+      maptexture.Translation[iX, iY] := curtrans;
+
+  needsupdate := True;
+  needbuffersupdate := True;
 end;
 
 end.

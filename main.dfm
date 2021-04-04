@@ -5559,6 +5559,19 @@ object Form1: TForm1
       Hint = 'Paste from clipboard here'
       OnClick = PasteHere1Click
     end
+    object N7: TMenuItem
+      Caption = '-'
+    end
+    object Applyrotation1: TMenuItem
+      Caption = 'Apply rotation'
+      Hint = 'Apply current rotation to selection'
+      OnClick = Applyrotation1Click
+    end
+    object Applytranslation1: TMenuItem
+      Caption = 'Apply translation'
+      Hint = 'Apply current translation to selection'
+      OnClick = Applytranslation1Click
+    end
   end
   object SavePictureDialog1: TSavePictureDialog
     DefaultExt = 'png'
