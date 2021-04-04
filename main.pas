@@ -132,6 +132,17 @@ type
     ExportWAD1: TMenuItem;
     SaveWADDialog: TSaveDialog;
     ExportWAD40961: TMenuItem;
+    Trans0SpeedButton: TSpeedButton;
+    Trans1SpeedButton: TSpeedButton;
+    Trans2SpeedButton: TSpeedButton;
+    Trans3SpeedButton: TSpeedButton;
+    Trans4SpeedButton: TSpeedButton;
+    Trans5SpeedButton: TSpeedButton;
+    Trans6SpeedButton: TSpeedButton;
+    Trans7SpeedButton: TSpeedButton;
+    Trans8SpeedButton: TSpeedButton;
+    Trans9SpeedButton: TSpeedButton;
+    Trans10SpeedButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -195,6 +206,17 @@ type
     procedure PasteHere1Click(Sender: TObject);
     procedure ExportWAD1Click(Sender: TObject);
     procedure ExportWAD40961Click(Sender: TObject);
+    procedure Trans0SpeedButtonClick(Sender: TObject);
+    procedure Trans1SpeedButtonClick(Sender: TObject);
+    procedure Trans2SpeedButtonClick(Sender: TObject);
+    procedure Trans3SpeedButtonClick(Sender: TObject);
+    procedure Trans4SpeedButtonClick(Sender: TObject);
+    procedure Trans5SpeedButtonClick(Sender: TObject);
+    procedure Trans6SpeedButtonClick(Sender: TObject);
+    procedure Trans7SpeedButtonClick(Sender: TObject);
+    procedure Trans8SpeedButtonClick(Sender: TObject);
+    procedure Trans9SpeedButtonClick(Sender: TObject);
+    procedure Trans10SpeedButtonClick(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -217,13 +239,14 @@ type
     rmousedown: boolean;
     rmousedownx, rmousedowny: integer;
     bktile: integer;
-    bkpalbitmap0: TBitmap;
-    bkpalbitmap1: TBitmap;
-    bkpalbitmap2: TBitmap;
-    bkpalbitmap3: TBitmap;
+    bkpalbitmap0: array[0..NUMTRANSLATIONS - 1] of TBitmap;
+    bkpalbitmap1: array[0..NUMTRANSLATIONS - 1] of TBitmap;
+    bkpalbitmap2: array[0..NUMTRANSLATIONS - 1] of TBitmap;
+    bkpalbitmap3: array[0..NUMTRANSLATIONS - 1] of TBitmap;
     closing: boolean;
     anglerotated: array[0..SCREENSIZEX - 1, 0..SCREENSIZEY - 1] of boolean;
     curangle: integer;
+    curtrans: integer;
     bkpalx, bkpaly: integer;
     selRect: TRect;
     procedure Idle(Sender: TObject; var Done: Boolean);
@@ -271,6 +294,7 @@ type
     procedure CopyToClipboardAsText;
     procedure DoExportWAD4096(const fn: string; const lname: string);
     procedure DoExportWAD8192(const fn: string; const lname: string);
+    procedure ChangeEditorTranslation(const trn: integer);
   public
     { Public declarations }
   end;
@@ -287,7 +311,7 @@ uses
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
-  i, j: integer;
+  i, j, t: integer;
   doCreate: boolean;
   tmpmap: TMapTexture;
   tile: integer;
@@ -314,6 +338,7 @@ begin
   rmousedowny := 0;
 
   curangle := 0;
+  curtrans := 0;
 
   ClearSelection;
 
@@ -372,74 +397,99 @@ begin
   GridButton1.Down := opt_showgrid;
   zoom := GetIntInRange(opt_zoom, MINZOOM, MAXZOOM);
 
-  bkpalbitmap0 := TBitmap.Create;
-  bkpalbitmap1 := TBitmap.Create;
-  bkpalbitmap2 := TBitmap.Create;
-  bkpalbitmap3 := TBitmap.Create;
+  for t := 0 to NUMTRANSLATIONS - 1 do
+  begin
+    bkpalbitmap0[t] := TBitmap.Create;
+    bkpalbitmap1[t] := TBitmap.Create;
+    bkpalbitmap2[t] := TBitmap.Create;
+    bkpalbitmap3[t] := TBitmap.Create;
+  end;
 
   tmpmap := TMapTexture.Create;
 
+  for j := 0 to 63 do
+    for i := 0 to 63 do
+      tmpmap.MapTiles[i, j] := -1;
+      
   tile := 0;
   for j := 0 to 15 do
     for i := 0 to 15 do
     begin
       tmpmap.MapTiles[i, j] := tile;
-      tmpmap.Angles[i, j] := 0;
       inc(tile);
     end;
 
-  bkpalbitmap0.Width := 2048;
-  bkpalbitmap0.Height := 2048;
+  for t := 0 to NUMTRANSLATIONS - 1 do
+  begin
+    for j := 0 to 15 do
+      for i := 0 to 15 do
+      begin
+        tmpmap.Angles[i, j] := 0;
+        tmpmap.Translation[i, j] := t;
+      end;
 
-  tmpmap.GetBitmap(buffer, False);
-  bkpalbitmap0.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap0.Width - 1, bkpalbitmap0.Height - 1), buffer);
-  bkpalbitmap0.Width := 512;
-  bkpalbitmap0.Height := 512;
+    bkpalbitmap0[t].Width := 2048;
+    bkpalbitmap0[t].Height := 2048;
 
-  // 90 degress
-  for j := 0 to 15 do
-    for i := 0 to 15 do
-      tmpmap.Angles[i, j] := 1;
+    tmpmap.GetBitmap(buffer, False);
+    bkpalbitmap0[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap0[t].Width - 1, bkpalbitmap0[t].Height - 1), buffer);
+    bkpalbitmap0[t].Width := 512;
+    bkpalbitmap0[t].Height := 512;
 
-  bkpalbitmap1.Width := 2048;
-  bkpalbitmap1.Height := 2048;
+    // 90 degress
+    for j := 0 to 15 do
+      for i := 0 to 15 do
+      begin
+        tmpmap.Angles[i, j] := 1;
+        tmpmap.Translation[i, j] := t;
+      end;
 
-  tmpmap.GetBitmap(buffer, False);
-  bkpalbitmap1.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap1.Width - 1, bkpalbitmap1.Height - 1), buffer);
-  bkpalbitmap1.Width := 512;
-  bkpalbitmap1.Height := 512;
+    bkpalbitmap1[t].Width := 2048;
+    bkpalbitmap1[t].Height := 2048;
 
-  // 180 degress
-  for j := 0 to 15 do
-    for i := 0 to 15 do
-      tmpmap.Angles[i, j] := 2;
+    tmpmap.GetBitmap(buffer, False);
+    bkpalbitmap1[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap1[t].Width - 1, bkpalbitmap1[t].Height - 1), buffer);
+    bkpalbitmap1[t].Width := 512;
+    bkpalbitmap1[t].Height := 512;
 
-  bkpalbitmap2.Width := 2048;
-  bkpalbitmap2.Height := 2048;
+    // 180 degress
+    for j := 0 to 15 do
+      for i := 0 to 15 do
+      begin
+        tmpmap.Angles[i, j] := 2;
+        tmpmap.Translation[i, j] := t;
+      end;
 
-  tmpmap.GetBitmap(buffer, False);
-  bkpalbitmap2.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap2.Width - 1, bkpalbitmap2.Height - 1), buffer);
-  bkpalbitmap2.Width := 512;
-  bkpalbitmap2.Height := 512;
+    bkpalbitmap2[t].Width := 2048;
+    bkpalbitmap2[t].Height := 2048;
 
-  // 270 degress
-  for j := 0 to 15 do
-    for i := 0 to 15 do
-      tmpmap.Angles[i, j] := 3;
+    tmpmap.GetBitmap(buffer, False);
+    bkpalbitmap2[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap2[t].Width - 1, bkpalbitmap2[t].Height - 1), buffer);
+    bkpalbitmap2[t].Width := 512;
+    bkpalbitmap2[t].Height := 512;
 
-  bkpalbitmap3.Width := 2048;
-  bkpalbitmap3.Height := 2048;
+    // 270 degress
+    for j := 0 to 15 do
+      for i := 0 to 15 do
+      begin
+        tmpmap.Angles[i, j] := 3;
+        tmpmap.Translation[i, j] := t;
+      end;
 
-  tmpmap.GetBitmap(buffer, False);
-  bkpalbitmap3.Canvas.StretchDraw(Rect(0, 0, bkpalbitmap3.Width - 1, bkpalbitmap3.Height - 1), buffer);
-  bkpalbitmap3.Width := 512;
-  bkpalbitmap3.Height := 512;
+    bkpalbitmap3[t].Width := 2048;
+    bkpalbitmap3[t].Height := 2048;
+
+    tmpmap.GetBitmap(buffer, False);
+    bkpalbitmap3[t].Canvas.StretchDraw(Rect(0, 0, bkpalbitmap3[t].Width - 1, bkpalbitmap3[t].Height - 1), buffer);
+    bkpalbitmap3[t].Width := 512;
+    bkpalbitmap3[t].Height := 512;
+  end;
 
   tmpmap.Free;
 
   bkpalx := 1;
   bkpaly := 1;
-  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0, '0', bktile);
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0[curtrans], '0', bktile);
 
   doCreate := True;
   if ParamCount > 0 then
@@ -463,6 +513,8 @@ begin
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
+var
+  t: integer;
 begin
   closing := True;
 
@@ -489,10 +541,13 @@ begin
   exportbuffer.Free;
   drawbuffer.Free;
 
-  bkpalbitmap0.Free;
-  bkpalbitmap1.Free;
-  bkpalbitmap2.Free;
-  bkpalbitmap3.Free;
+  for t := 0 to NUMTRANSLATIONS - 1 do
+  begin
+    bkpalbitmap0[t].Free;
+    bkpalbitmap1[t].Free;
+    bkpalbitmap2[t].Free;
+    bkpalbitmap3[t].Free;
+  end;
 
   maptexture.Free;
   backscreen.Free;
@@ -586,12 +641,14 @@ procedure TForm1.EditActionFreeDraw(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := bktile;
   maptexture.Angles[X, Y] := curangle;
+  maptexture.Translation[X, Y] := curtrans;
 end;
 
 procedure TForm1.EditActionErase(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := 0;
   maptexture.Angles[X, Y] := 0;
+  maptexture.Translation[X, Y] := 0;
 end;
 
 procedure TForm1.EditActionFloodFill(const X, Y: integer);
@@ -603,6 +660,7 @@ begin
   begin
     maptexture.MapTiles[X, Y] := bktile;
     maptexture.Angles[X, Y] := curangle;
+    maptexture.Translation[X, Y] := curtrans;
     if X > 0 then
       if maptexture.MapTiles[X - 1, Y] = rover then
         EditActionFloodFill(X - 1, Y);
@@ -631,15 +689,19 @@ begin
   begin
     maptexture.MapTiles[i, atop] := bktile;
     maptexture.Angles[i, atop] := curangle;
+    maptexture.Translation[i, atop] := curtrans;
     maptexture.MapTiles[i, abottom] := bktile;
     maptexture.Angles[i, abottom] := curangle;
+    maptexture.Translation[i, abottom] := curtrans;
   end;
   for i := atop + 1 to abottom - 1 do
   begin
     maptexture.MapTiles[aleft, i] := bktile;
     maptexture.Angles[aleft, i] := curangle;
+    maptexture.Translation[aleft, i] := curtrans;
     maptexture.MapTiles[aright, i] := bktile;
     maptexture.Angles[aright, i] := curangle;
+    maptexture.Translation[aright, i] := curtrans;
   end;
 end;
 
@@ -657,6 +719,7 @@ begin
     begin
       maptexture.MapTiles[i, j] := bktile;
       maptexture.Angles[i, j] := curangle;
+      maptexture.Translation[i, j] := curtrans;
     end;
 end;
 
@@ -664,6 +727,7 @@ procedure TForm1.EditActionLine(const X, Y: integer);
 begin
   maptexture.MapTiles[X, Y] := bktile;
   maptexture.Angles[X, Y] := curangle;
+  maptexture.Translation[X, Y] := curtrans;
 end;
 
 procedure TForm1.midpointellipse(const X, Y: integer; const filled: boolean);
@@ -681,6 +745,7 @@ var
       begin
         maptexture.MapTiles[ax, ay] := bktile;
         maptexture.Angles[ax, ay] := curangle;
+        maptexture.Translation[ax, ay] := curtrans;
       end;
   end;
 
@@ -1405,11 +1470,11 @@ procedure TForm1.BackgroundPalette1MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   case curangle of
-    0: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap0, '0', bktile);
-    1: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap1, '90', bktile);
-    2: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap2, '180', bktile);
+    0: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap0[curtrans], '0', bktile);
+    1: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap1[curtrans], '90', bktile);
+    2: HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap2[curtrans], '180', bktile);
   else
-    HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap3, '270', bktile);
+    HandlePaletteImage(X, Y, BackgroundPalette1, bkpalbitmap3[curtrans], '270', bktile);
   end;
 end;
 
@@ -1633,25 +1698,25 @@ end;
 procedure TForm1.RotateSpeedButton0Click(Sender: TObject);
 begin
   curangle := 0;
-  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0, '0', bktile);
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0[curtrans], '0', bktile);
 end;
 
 procedure TForm1.RotateSpeedButton90Click(Sender: TObject);
 begin
   curangle := 1;
-  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap1, '90', bktile);
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap1[curtrans], '90', bktile);
 end;
 
 procedure TForm1.RotateSpeedButton180Click(Sender: TObject);
 begin
   curangle := 2;
-  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap2, '180', bktile);
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap2[curtrans], '180', bktile);
 end;
 
 procedure TForm1.RotateSpeedButton270Click(Sender: TObject);
 begin
   curangle := 3;
-  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap3, '270', bktile);
+  HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap3[curtrans], '270', bktile);
 end;
 
 procedure TForm1.ClearSelection;
@@ -1882,6 +1947,73 @@ begin
     BackupFile(SaveWADDialog.FileName);
     DoExportWAD4096(SaveWADDialog.FileName, lname);
   end;
+end;
+
+procedure TForm1.ChangeEditorTranslation(const trn: integer);
+begin
+  curtrans := trn;
+  case curangle of
+    0: HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap0[curtrans], '0', bktile);
+    1: HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap1[curtrans], '90', bktile);
+    2: HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap2[curtrans], '180', bktile);
+  else
+    HandlePaletteImage(bkpalx, bkpaly, BackgroundPalette1, bkpalbitmap3[curtrans], '270', bktile);
+  end;
+end;
+
+procedure TForm1.Trans0SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(0);
+end;
+
+procedure TForm1.Trans1SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(1);
+end;
+
+procedure TForm1.Trans2SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(2);
+end;
+
+procedure TForm1.Trans3SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(3);
+end;
+
+procedure TForm1.Trans4SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(4);
+end;
+
+procedure TForm1.Trans5SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(5);
+end;
+
+procedure TForm1.Trans6SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(6);
+end;
+
+procedure TForm1.Trans7SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(7);
+end;
+
+procedure TForm1.Trans8SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(8);
+end;
+
+procedure TForm1.Trans9SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(9);
+end;
+
+procedure TForm1.Trans10SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(10);
 end;
 
 end.
