@@ -386,32 +386,51 @@ var
         end;
 
         _rotate_tile(@tile, data.angles_trans[m] and ANGLE_MASK);
-        trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
 
-        it := 0;
-        for iy := yb to yb + 63 do
-          for ix := xb to xb + 63 do
+        if data.angles_trans[m] shr ANGLE_SHIFT = 0 then
+        begin
+          it := 0;
+          for iy := yb to yb + 63 do
           begin
-            bmbuffer4096[iy, ix] := trans[tile[it]];
-            inc(it);
+            Move(tile[it], bmbuffer4096[iy, xb], 64);
+            inc(it, 64);
           end;
-      end;
-    end;
+{            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[iy, ix] := tile[it];
+              inc(it);
+            end;}
+        end
+        else
+        begin
+          trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
 
-    ysiz := 2047;
-    if sy >= 0 then
-      if sy < 2047 then
-        ysiz := sy;
-        
-    for iy := 0 to ysiz do
-    begin
-      tmpbuf := bmbuffer4096[iy];
-      bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
-      bmbuffer4096[4095 - iy] := tmpbuf;
+          it := 0;
+          for iy := yb to yb + 63 do
+            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[iy, ix] := trans[tile[it]];
+              inc(it);
+            end;
+        end;
+
+      end;
     end;
 
     if doublesize then
     begin
+      ysiz := 2047;
+      if sy >= 0 then
+        if sy < 2047 then
+          ysiz := sy;
+
+      for iy := 0 to ysiz do
+      begin
+        tmpbuf := bmbuffer4096[iy];
+        bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
+        bmbuffer4096[4095 - iy] := tmpbuf;
+      end;
+
       GetMem(bmbuffer8192, SizeOf(bmbuffer8192_t));
       for iy := 0 to 4095 do
         for ix := 0 to 4095 do
@@ -467,7 +486,7 @@ var
         ln := b.ScanLine[iy];
         for ix := 0 to bsizex - 1 do
         begin
-          bb := bmbuffer4096[ix, iy];
+          bb := bmbuffer4096[4095 - ix, iy];
           c := RGBpal[bb];
           ln[ix] := c;
         end;
@@ -555,15 +574,30 @@ var
         end;
 
         _rotate_tile(@tile, data.angles_trans[m] and ANGLE_MASK);
-        trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
 
-        it := 0;
-        for iy := yb to yb + 63 do
-          for ix := xb to xb + 63 do
-          begin
-            bmbuffer4096[ix, iy] := trans[tile[it]];
-            inc(it);
-          end;
+        if data.angles_trans[m] shr ANGLE_SHIFT = 0 then
+        begin
+          it := 0;
+          for iy := yb to yb + 63 do
+            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[ix, iy] := tile[it];
+              inc(it);
+            end;
+        end
+        else
+        begin
+          trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
+
+          it := 0;
+          for iy := yb to yb + 63 do
+            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[ix, iy] := trans[tile[it]];
+              inc(it);
+            end;
+        end;
+
       end;
     end;
 
@@ -655,15 +689,30 @@ var
         end;
 
         _rotate_tile(@tile, data.angles_trans[m] and ANGLE_MASK);
-        trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
 
-        it := 0;
-        for iy := yb to yb + 63 do
-          for ix := xb to xb + 63 do
-          begin
-            bmbuffer4096[ix, iy] := trans[tile[it]];
-            inc(it);
-          end;
+        if data.angles_trans[m] shr ANGLE_SHIFT = 0 then
+        begin
+          it := 0;
+          for iy := yb to yb + 63 do
+            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[ix, iy] := tile[it];
+              inc(it);
+            end;
+        end
+        else
+        begin
+          trans := @TRANSLATIONS[data.angles_trans[m] shr ANGLE_SHIFT];
+
+          it := 0;
+          for iy := yb to yb + 63 do
+            for ix := xb to xb + 63 do
+            begin
+              bmbuffer4096[ix, iy] := trans[tile[it]];
+              inc(it);
+            end;
+        end;
+
       end;
     end;
 
