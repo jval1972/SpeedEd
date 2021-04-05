@@ -146,6 +146,16 @@ type
     N7: TMenuItem;
     Applytranslation1: TMenuItem;
     Applyrotation1: TMenuItem;
+    Trans11SpeedButton: TSpeedButton;
+    Trans12SpeedButton: TSpeedButton;
+    Trans13SpeedButton: TSpeedButton;
+    Trans14SpeedButton: TSpeedButton;
+    Trans15SpeedButton: TSpeedButton;
+    Trans16SpeedButton: TSpeedButton;
+    Trans17SpeedButton: TSpeedButton;
+    Trans18SpeedButton: TSpeedButton;
+    Trans19SpeedButton: TSpeedButton;
+    Trans20SpeedButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -222,6 +232,16 @@ type
     procedure Trans10SpeedButtonClick(Sender: TObject);
     procedure Applyrotation1Click(Sender: TObject);
     procedure Applytranslation1Click(Sender: TObject);
+    procedure Trans11SpeedButtonClick(Sender: TObject);
+    procedure Trans12SpeedButtonClick(Sender: TObject);
+    procedure Trans13SpeedButtonClick(Sender: TObject);
+    procedure Trans14SpeedButtonClick(Sender: TObject);
+    procedure Trans15SpeedButtonClick(Sender: TObject);
+    procedure Trans16SpeedButtonClick(Sender: TObject);
+    procedure Trans17SpeedButtonClick(Sender: TObject);
+    procedure Trans18SpeedButtonClick(Sender: TObject);
+    procedure Trans19SpeedButtonClick(Sender: TObject);
+    procedure Trans20SpeedButtonClick(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -2182,6 +2202,56 @@ begin
 
   needsupdate := True;
   needbuffersupdate := True;
+end;
+
+procedure TForm1.Trans11SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(11);
+end;
+
+procedure TForm1.Trans12SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(12);
+end;
+
+procedure TForm1.Trans13SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(13);
+end;
+
+procedure TForm1.Trans14SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(14);
+end;
+
+procedure TForm1.Trans15SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(15);
+end;
+
+procedure TForm1.Trans16SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(16);
+end;
+
+procedure TForm1.Trans17SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(17);
+end;
+
+procedure TForm1.Trans18SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(18);
+end;
+
+procedure TForm1.Trans19SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(19);
+end;
+
+procedure TForm1.Trans20SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(20);
 end;
 
 end.
