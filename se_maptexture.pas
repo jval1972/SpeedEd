@@ -354,6 +354,7 @@ var
     g, m: integer;
     tile: packed array[0..4095] of byte;
     tmpbuf: buffer4096_t;
+    ysiz: integer;
     it: integer;
     bmbuffer4096: bmbuffer4096_p;
     bmbuffer8192: bmbuffer8192_p;
@@ -397,7 +398,12 @@ var
       end;
     end;
 
-    for iy := 0 to 2047 do
+    ysiz := 2047;
+    if sy >= 0 then
+      if sy < 2047 then
+        ysiz := sy;
+        
+    for iy := 0 to ysiz do
     begin
       tmpbuf := bmbuffer4096[iy];
       bmbuffer4096[iy] := bmbuffer4096[4095 - iy];
