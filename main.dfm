@@ -6911,8 +6911,8 @@ object Form1: TForm1
       Top = 0
       Width = 391
       Height = 658
-      HorzScrollBar.Smooth = True
-      VertScrollBar.Smooth = True
+      HorzScrollBar.Increment = 33
+      VertScrollBar.Increment = 57
       Align = alClient
       BevelEdges = []
       BevelInner = bvNone
