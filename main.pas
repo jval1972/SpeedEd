@@ -156,6 +156,10 @@ type
     Trans18SpeedButton: TSpeedButton;
     Trans19SpeedButton: TSpeedButton;
     Trans20SpeedButton: TSpeedButton;
+    Trans21SpeedButton: TSpeedButton;
+    Trans22SpeedButton: TSpeedButton;
+    Trans23SpeedButton: TSpeedButton;
+    Trans24SpeedButton: TSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -242,6 +246,10 @@ type
     procedure Trans18SpeedButtonClick(Sender: TObject);
     procedure Trans19SpeedButtonClick(Sender: TObject);
     procedure Trans20SpeedButtonClick(Sender: TObject);
+    procedure Trans21SpeedButtonClick(Sender: TObject);
+    procedure Trans22SpeedButtonClick(Sender: TObject);
+    procedure Trans23SpeedButtonClick(Sender: TObject);
+    procedure Trans24SpeedButtonClick(Sender: TObject);
   private
     { Private declarations }
     buffer, exportbuffer: TBitmap;
@@ -2252,6 +2260,26 @@ end;
 procedure TForm1.Trans20SpeedButtonClick(Sender: TObject);
 begin
   ChangeEditorTranslation(20);
+end;
+
+procedure TForm1.Trans21SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(21);
+end;
+
+procedure TForm1.Trans22SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(22);
+end;
+
+procedure TForm1.Trans23SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(23);
+end;
+
+procedure TForm1.Trans24SpeedButtonClick(Sender: TObject);
+begin
+  ChangeEditorTranslation(24);
 end;
 
 end.
