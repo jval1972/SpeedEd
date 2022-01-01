@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
 //  SpeedEd: GLSpeed map Editor utilities
-//  Copyright (C) 2021 by Jim Valavanis
+//  Copyright (C) 2021-2022 by Jim Valavanis
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -452,7 +452,7 @@ begin
   for j := 0 to 63 do
     for i := 0 to 63 do
       tmpmap.MapTiles[i, j] := -1;
-      
+
   tile := 0;
   for j := 0 to 15 do
     for i := 0 to 15 do
@@ -959,7 +959,7 @@ begin
     Exit;
   if not IsIntInRange(Y, 0, SCREENSIZEY - 1) then
     Exit;
-    
+
   selRect.Right := X;
   selRect.Bottom := Y;
 end;
